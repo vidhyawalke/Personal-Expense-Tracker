@@ -31,6 +31,13 @@
   gap: 16px;
 }
 
+.brand-logo-img {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+}
+
 .brand-icon-wrapper {
   width: 48px;
   height: 48px;

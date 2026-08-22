@@ -5,7 +5,8 @@ import ExpenseList from './components/ExpenseList';
 import BudgetPlanner from './components/BudgetPlanner';
 import Analytics from './components/Analytics';
 import ClockWidget from './components/ClockWidget';
-import { Shield, LayoutDashboard, Receipt, Target, BarChart2 } from 'lucide-react';
+import harmonyLogo from './assets/harmony_logo.png';
+import { LayoutDashboard, Receipt, Target, BarChart2 } from 'lucide-react';
 
 const API_BASE = 'http://localhost:8000/api';
 
@@ -150,9 +151,11 @@ export default function App() {
       
       <header className="app-header">
         <div className="brand-section">
-          <div className="brand-icon-wrapper">
-            <Shield size={26} />
-          </div>
+          <img
+            src={harmonyLogo}
+            alt="Harmony Expense Tracker"
+            className="brand-logo-img"
+          />
           <div>
             <h1 className="brand-title">Harmony Expense Tracker</h1>
             <p className="brand-subtitle">Cultivate Financial Wellness and Balanced Growth</p>
