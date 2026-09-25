@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Compass, TrendingUp, Save, Settings, Lock, Unlock, CheckCircle2, AlertTriangle, Calendar, DollarSign, PieChart } from 'lucide-react';
+import { Compass, TrendingUp, Save, Settings, CheckCircle2, AlertTriangle, Calendar, DollarSign, Calculator } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 const round2 = (num) => Math.round((Number(num) || 0) * 100) / 100;
@@ -7,73 +7,68 @@ const round2 = (num) => Math.round((Number(num) || 0) * 100) / 100;
 export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, currency = '₹' }) {
   const savingsConfig = budgetData?.savings_target || {};
   
-  // Cadence: 'daily' | 'weekly' | 'monthly' | 'yearly'
-  const [cadence, setCadence] = useState(savingsConfig.cadence || 'daily');
+  // Cadence: 'month' | 'year' (Direct user requirement: goal saving for month and year)
+  const [cadence, setCadence] = useState(savingsConfig.cadence === 'year' ? 'year' : 'month');
   const [incomeInput, setIncomeInput] = useState(budgetData?.monthly_income ? String(budgetData.monthly_income) : '');
   const [budgetInput, setBudgetInput] = useState(budgetData?.monthly_budget ? String(budgetData.monthly_budget) : '');
   const [goalInput, setGoalInput] = useState(savingsConfig.goal ? String(savingsConfig.goal) : '');
-  const [stepInput, setStepInput] = useState(savingsConfig.target_box_amount ? String(savingsConfig.target_box_amount) : '');
+  const [durationInput, setDurationInput] = useState(savingsConfig.duration ? String(savingsConfig.duration) : (cadence === 'year' ? '1' : '12'));
   
   const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
   const [validationError, setValidationError] = useState('');
 
-  // Active saved settings
+  // Active saved configuration
   const savedBoxes = savingsConfig.saved_boxes || [];
   const activeGoal = Number(savingsConfig.goal) || 0;
-  const activeStep = Number(savingsConfig.target_box_amount) || 0;
-  const activeCadence = savingsConfig.cadence || 'daily';
-  const isSettingsLocked = !(activeGoal > 0 && activeStep > 0 && savingsConfig.isConfigSaved);
+  const activeCadence = savingsConfig.cadence === 'year' ? 'year' : 'month';
+  const activeDuration = Number(savingsConfig.duration) || (activeCadence === 'year' ? 1 : 12);
 
-  // Parse input values
+  // Live parsed numbers
   const parsedIncome = parseFloat(incomeInput) || 0;
   const parsedBudget = parseFloat(budgetInput) || 0;
   const liveGoal = parseFloat(goalInput) || 0;
-  const liveStep = parseFloat(stepInput) || 0;
+  const liveDuration = parseInt(durationInput, 10) || (cadence === 'year' ? 1 : 12);
 
-  // Financial Analyst Metrics: Money in Hand
+  // Financial Analyst Math Formulas
   const disposableMonthly = Math.max(0, parsedIncome - parsedBudget);
-  const disposableDaily = round2(disposableMonthly / 30.42);
-  const disposableWeekly = round2(disposableMonthly / 4.33);
-  const disposableYearly = round2(disposableMonthly * 12);
+  const disposableAnnual = round2(disposableMonthly * 12);
 
-  // Equivalent monthly savings requirement based on chosen cadence
-  let monthlyRequiredForStep = 0;
-  let periodCapacity = 0;
-  let maxHorizonSteps = 365;
+  // Timeframe calculation
+  let totalMonths = 0;
+  let targetPerPeriod = 0;
+  let targetPerMonth = 0;
+  let periodUnitLabel = '';
+  let periodTotalUnits = 0;
 
-  if (cadence === 'daily') {
-    monthlyRequiredForStep = round2(liveStep * 30.42);
-    periodCapacity = disposableDaily;
-    maxHorizonSteps = 365; // 1 year of days
-  } else if (cadence === 'weekly') {
-    monthlyRequiredForStep = round2(liveStep * 4.33);
-    periodCapacity = disposableWeekly;
-    maxHorizonSteps = 52; // 1 year of weeks
-  } else if (cadence === 'monthly') {
-    monthlyRequiredForStep = liveStep;
-    periodCapacity = disposableMonthly;
-    maxHorizonSteps = 12; // 1 year of months
-  } else if (cadence === 'yearly') {
-    monthlyRequiredForStep = round2(liveStep / 12);
-    periodCapacity = disposableYearly;
-    maxHorizonSteps = 5; // 5 years
+  if (cadence === 'month') {
+    totalMonths = Math.max(1, liveDuration);
+    periodTotalUnits = totalMonths;
+    periodUnitLabel = 'Month';
+    targetPerPeriod = liveGoal > 0 ? round2(liveGoal / totalMonths) : 0;
+    targetPerMonth = targetPerPeriod;
+  } else {
+    // Yearly goal
+    const years = Math.max(1, liveDuration);
+    totalMonths = years * 12;
+    // If 1 year, we break into 12 monthly blocks; if multi-year, we break into year blocks
+    periodTotalUnits = years === 1 ? 12 : years;
+    periodUnitLabel = years === 1 ? 'Month' : 'Year';
+    targetPerPeriod = liveGoal > 0 ? round2(liveGoal / periodTotalUnits) : 0;
+    targetPerMonth = liveGoal > 0 ? round2(liveGoal / totalMonths) : 0;
   }
 
-  // Live steps calculation
-  const liveCalculatedSteps = (liveGoal > 0 && liveStep > 0) ? Math.ceil(round2(liveGoal / liveStep)) : 0;
-  const exceedsMaxSteps = liveCalculatedSteps > maxHorizonSteps;
+  // Solvency & Capacity Math Check
+  const hasCashflowDeficit = liveGoal > 0 && targetPerMonth > disposableMonthly;
+  const totalStepsToLoad = Math.min(36, periodTotalUnits); // Up to 36 blocks (3 years)
 
-  // Cashflow over-allocation check
-  const isOverAllocatingCashflow = liveStep > 0 && periodCapacity > 0 && liveStep > periodCapacity;
-
-  // Active matrix calculation
-  const activeMaxHorizon = activeCadence === 'daily' ? 365 : activeCadence === 'weekly' ? 52 : activeCadence === 'monthly' ? 12 : 5;
-  const totalActiveSteps = (activeGoal > 0 && activeStep > 0) ? Math.min(activeMaxHorizon, Math.ceil(round2(activeGoal / activeStep))) : 0;
-  const totalSavedFromMatrix = round2(Math.min(activeGoal, savedBoxes.length * activeStep));
+  // Active Matrix Calculations
+  const activeTotalUnits = activeCadence === 'year' && activeDuration === 1 ? 12 : activeDuration;
+  const activeTargetPerBlock = activeGoal > 0 && activeTotalUnits > 0 ? round2(activeGoal / activeTotalUnits) : 0;
+  const totalSavedFromMatrix = round2(Math.min(activeGoal, savedBoxes.length * activeTargetPerBlock));
   const matrixProgressPercent = activeGoal > 0 ? Math.min(100, round2((totalSavedFromMatrix / activeGoal) * 100)) : 0;
 
-  // 50/30/20 Calculations
-  const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+  // 50/30/20 Math Calculations
+  const totalSpent = round2(expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0));
   const needsTarget = round2(parsedIncome * 0.50);
   const wantsTarget = round2(parsedIncome * 0.30);
   const savingsTarget = round2(parsedIncome * 0.20);
@@ -93,11 +88,6 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
   const totalWantsWithOther = round2(actualWants + (actualOther > 0 ? actualOther : 0));
   const actualSavings = round2(Math.max(0, parsedIncome - totalSpent));
 
-  // Cadence labels
-  const unitName = cadence === 'daily' ? 'day' : cadence === 'weekly' ? 'week' : cadence === 'monthly' ? 'month' : 'year';
-  const unitPlural = cadence === 'daily' ? 'days' : cadence === 'weekly' ? 'weeks' : cadence === 'monthly' ? 'months' : 'years';
-  const activeUnitPrefix = activeCadence === 'daily' ? 'Day' : activeCadence === 'weekly' ? 'Wk' : activeCadence === 'monthly' ? 'Mo' : 'Yr';
-
   const handleSaveConfig = (e) => {
     e.preventDefault();
     setValidationError('');
@@ -111,34 +101,28 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
       return;
     }
     if (parsedBudget > parsedIncome) {
-      setValidationError(`Spending limit (${currency}${parsedBudget}) exceeds monthly income (${currency}${parsedIncome})! You cannot save with negative cashflow.`);
+      setValidationError(`Spending limit (${currency}${parsedBudget}) cannot exceed monthly income (${currency}${parsedIncome}).`);
       return;
     }
     if (isNaN(liveGoal) || liveGoal <= 0) {
-      setValidationError("Please enter a valid savings goal amount.");
+      setValidationError("Please enter your target savings goal.");
       return;
     }
-    if (isNaN(liveStep) || liveStep <= 0) {
-      setValidationError(`Please enter the amount you can save per ${unitName}.`);
-      return;
-    }
-
-    // Financial Analyst Verification: Check Money in Hand
-    if (liveStep > periodCapacity) {
-      setValidationError(`Financial Deficit: Saving ${currency}${liveStep}/${unitName} requires ${currency}${monthlyRequiredForStep}/month. Your disposable money in hand (Income ${currency}${parsedIncome} - Limit ${currency}${parsedBudget}) is only ${currency}${disposableMonthly}/month (${currency}${periodCapacity}/${unitName}). Please reduce your save amount to stay solvent.`);
+    if (liveDuration <= 0) {
+      setValidationError(`Please enter a valid duration (minimum 1 ${cadence}).`);
       return;
     }
 
-    // Financial Analyst Horizon Verification
-    const calculatedSteps = Math.ceil(round2(liveGoal / liveStep));
-    if (calculatedSteps > maxHorizonSteps) {
-      const minStepToFit = Math.ceil(round2(liveGoal / maxHorizonSteps));
-      const horizonYears = (calculatedSteps / (cadence === 'daily' ? 365 : cadence === 'weekly' ? 52 : 12)).toFixed(1);
-      setValidationError(`Timeline Exceeded: Saving ${currency}${liveStep} per ${unitName} would take ${calculatedSteps} ${unitPlural} (${horizonYears} years) to reach ${currency}${liveGoal}! For a realistic 1-year ${cadence} target (max ${maxHorizonSteps} steps), you need to save at least ${currency}${minStepToFit} per ${unitName}.`);
+    // Mathematical Solvency Constraint Check
+    if (targetPerMonth > disposableMonthly) {
+      const deficit = round2(targetPerMonth - disposableMonthly);
+      setValidationError(
+        `Mathematical Deficit: To save ${currency}${liveGoal} in ${cadence === 'month' ? `${liveDuration} months` : `${liveDuration} year(s)`} requires ${currency}${targetPerMonth}/month. Your disposable monthly savings capacity (Income ${currency}${parsedIncome} - Spending Limit ${currency}${parsedBudget}) is ${currency}${disposableMonthly}/month. Shortfall: ${currency}${deficit}/month.`
+      );
       return;
     }
 
-    const isSameTarget = liveGoal === activeGoal && liveStep === activeStep && cadence === activeCadence;
+    const isSameTarget = liveGoal === activeGoal && cadence === activeCadence && liveDuration === activeDuration;
     const finalSavedBoxes = isSameTarget ? savedBoxes : [];
 
     onUpdateBudget({
@@ -146,8 +130,9 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
       monthly_budget: round2(parsedBudget),
       savings_target: {
         goal: round2(liveGoal),
-        target_box_amount: round2(liveStep),
         cadence: cadence,
+        duration: liveDuration,
+        target_box_amount: targetPerPeriod,
         isConfigSaved: true,
         saved_boxes: finalSavedBoxes
       }
@@ -164,10 +149,10 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
       updated = [...savedBoxes, boxNumber];
       try {
         confetti({
-          particleCount: 50,
-          spread: 75,
+          particleCount: 40,
+          spread: 60,
           origin: { y: 0.7 },
-          colors: ['#b86b28', '#523222', '#e07a5f', '#3b82f6', '#10b981', '#ec4899', '#f59e0b']
+          colors: ['#059669', '#2563eb', '#d97706', '#dc2626', '#7c3aed']
         });
       } catch {
         // Fallback
@@ -188,62 +173,35 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       
       {/* Settings Card */}
-      <div className="harmony-card">
+      <div className="finance-card">
         <div className="card-header">
           <div className="card-title">
-            <Settings size={22} color="var(--coffee-primary)" />
-            <span>Budget & Financial Milestone Configuration</span>
+            <Calculator size={20} color="var(--primary)" />
+            <span>Budget & Goal Savings Setup</span>
           </div>
-          {activeGoal > 0 && activeStep > 0 && savingsConfig.isConfigSaved && (
-            <span style={{ fontSize: '0.84rem', color: 'var(--coffee-primary)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '800' }}>
-              <Unlock size={16} /> Tracker Active
+          {activeGoal > 0 && savingsConfig.isConfigSaved && (
+            <span style={{ fontSize: '0.82rem', color: 'var(--accent-green)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '700' }}>
+              <CheckCircle2 size={16} /> Target Saved & Active
             </span>
           )}
         </div>
 
-        {/* Disposable Money in Hand Metric Bar */}
-        {parsedIncome > 0 && (
-          <div style={{
-            background: 'var(--coffee-light)',
-            border: '1px solid var(--coffee-border)',
-            borderRadius: 'var(--radius-sm)',
-            padding: '12px 16px',
-            marginBottom: '16px',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-            gap: '10px'
-          }}>
-            <div style={{ fontSize: '0.88rem', color: 'var(--coffee-dark)', fontWeight: '600' }}>
-              <span>Disposable Money in Hand: </span>
-              <strong>{currency}{disposableMonthly.toFixed(2)}/mo</strong>
-              <span style={{ color: 'var(--mocha-muted)', fontSize: '0.82rem', marginLeft: '6px' }}>
-                ({currency}{disposableDaily.toFixed(2)}/day · {currency}{disposableWeekly.toFixed(2)}/week)
-              </span>
-            </div>
-            <span style={{ fontSize: '0.8rem', color: 'var(--caramel-accent)', fontWeight: '700' }}>
-              Max safe saving rate: {parsedIncome > 0 ? ((disposableMonthly / parsedIncome) * 100).toFixed(0) : 0}% of income
-            </span>
-          </div>
-        )}
-
         {validationError && (
           <div className="alert-banner danger" style={{ marginBottom: '16px' }}>
-            <AlertTriangle size={20} />
+            <AlertTriangle size={18} />
             <div style={{ lineHeight: 1.4 }}>{validationError}</div>
           </div>
         )}
 
         {saveSuccessMsg && (
           <div className="alert-banner success" style={{ marginBottom: '16px' }}>
-            <CheckCircle2 size={20} />
-            <span>Settings saved! Your milestone tracker is active below.</span>
+            <CheckCircle2 size={18} />
+            <span>Settings saved successfully! Goal milestone blocks updated below.</span>
           </div>
         )}
 
         <form onSubmit={handleSaveConfig}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
             
             <div className="form-group">
               <label className="form-label">Monthly Income ({currency})</label>
@@ -259,7 +217,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
             </div>
 
             <div className="form-group">
-              <label className="form-label">Spending Limit ({currency})</label>
+              <label className="form-label">Monthly Spending Limit ({currency})</label>
               <input
                 type="number"
                 step="0.01"
@@ -272,11 +230,11 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
             </div>
 
             <div className="form-group">
-              <label className="form-label">Target Savings Goal ({currency})</label>
+              <label className="form-label">Savings Goal Target ({currency})</label>
               <input
                 type="number"
                 step="0.01"
-                placeholder="e.g. 200 or 10000"
+                placeholder="e.g. 60000"
                 className="form-input"
                 value={goalInput}
                 onChange={(e) => setGoalInput(e.target.value)}
@@ -285,75 +243,75 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
             </div>
 
             <div className="form-group">
-              <label className="form-label">Goal Cadence (Frequency)</label>
+              <label className="form-label">Timeframe Type</label>
               <div className="cadence-selector">
                 <button
                   type="button"
-                  className={`cadence-btn ${cadence === 'daily' ? 'active' : ''}`}
-                  onClick={() => setCadence('daily')}
+                  className={`cadence-btn ${cadence === 'month' ? 'active' : ''}`}
+                  onClick={() => {
+                    setCadence('month');
+                    setDurationInput('12');
+                  }}
                 >
-                  Daily
+                  Monthly Goal
                 </button>
                 <button
                   type="button"
-                  className={`cadence-btn ${cadence === 'weekly' ? 'active' : ''}`}
-                  onClick={() => setCadence('weekly')}
+                  className={`cadence-btn ${cadence === 'year' ? 'active' : ''}`}
+                  onClick={() => {
+                    setCadence('year');
+                    setDurationInput('1');
+                  }}
                 >
-                  Weekly
-                </button>
-                <button
-                  type="button"
-                  className={`cadence-btn ${cadence === 'monthly' ? 'active' : ''}`}
-                  onClick={() => setCadence('monthly')}
-                >
-                  Monthly
-                </button>
-                <button
-                  type="button"
-                  className={`cadence-btn ${cadence === 'yearly' ? 'active' : ''}`}
-                  onClick={() => setCadence('yearly')}
-                >
-                  Yearly
+                  Yearly Goal
                 </button>
               </div>
             </div>
 
             <div className="form-group">
-              <label className="form-label">Save per {unitName} ({currency})</label>
+              <label className="form-label">
+                Target Duration ({cadence === 'month' ? 'Months' : 'Years'})
+              </label>
               <input
                 type="number"
-                step="0.01"
-                placeholder="e.g. 10 or 500"
+                min="1"
+                max={cadence === 'month' ? "36" : "5"}
+                placeholder={cadence === 'month' ? "e.g. 6 or 12" : "e.g. 1 or 2"}
                 className="form-input"
-                value={stepInput}
-                onChange={(e) => setStepInput(e.target.value)}
+                value={durationInput}
+                onChange={(e) => setDurationInput(e.target.value)}
                 required
               />
             </div>
 
           </div>
 
-          {/* Financial Analyst Forecast Box */}
-          {liveGoal > 0 && liveStep > 0 && (
-            <div className="calc-preview-box">
-              <div className="calc-preview-row">
+          {/* Mathematical Formula Preview */}
+          {liveGoal > 0 && liveDuration > 0 && (
+            <div className="calc-formula-box">
+              <div className="calc-formula-row">
                 <div>
-                  <strong>Financial Forecast: </strong>
+                  <strong>Mathematical Breakdown: </strong>
                   <span>
-                    Saving {currency}{round2(liveStep)} per {unitName} ({currency}{monthlyRequiredForStep}/mo) will reach {currency}{round2(liveGoal)} in <strong>{liveCalculatedSteps} {liveCalculatedSteps === 1 ? unitName : unitPlural}</strong>.
+                    To reach {currency}{round2(liveGoal)} in {liveDuration} {cadence === 'month' ? (liveDuration === 1 ? 'month' : 'months') : (liveDuration === 1 ? 'year' : 'years')}:
                   </span>
                 </div>
-                {exceedsMaxSteps ? (
-                  <span style={{ color: 'var(--color-danger)', fontWeight: '800', fontSize: '0.86rem' }}>
-                    ⚠️ Exceeds {maxHorizonSteps}-step {cadence} limit ({liveCalculatedSteps} {unitPlural})
-                  </span>
-                ) : isOverAllocatingCashflow ? (
-                  <span style={{ color: 'var(--color-danger)', fontWeight: '800', fontSize: '0.86rem' }}>
-                    ⚠️ Exceeds money in hand ({currency}{periodCapacity}/{unitName})
+                <div>
+                  Required: <strong>{currency}{targetPerMonth.toFixed(2)}/month</strong> ({currency}{targetPerPeriod.toFixed(2)} per {periodUnitLabel})
+                </div>
+              </div>
+
+              <div className="calc-formula-row" style={{ borderTop: '1px solid var(--border-card)', paddingTop: '6px', fontSize: '0.84rem' }}>
+                <span style={{ color: 'var(--text-muted)' }}>
+                  Monthly Savings Capacity (Income {currency}{parsedIncome} - Limit {currency}{parsedBudget}): <strong>{currency}{disposableMonthly.toFixed(2)}/month</strong>
+                </span>
+                {hasCashflowDeficit ? (
+                  <span style={{ color: 'var(--color-danger)', fontWeight: '700' }}>
+                    ⚠️ Deficit of {currency}{round2(targetPerMonth - disposableMonthly)}/mo
                   </span>
                 ) : (
-                  <span style={{ color: 'var(--color-success)', fontWeight: '800', fontSize: '0.86rem' }}>
-                    ✓ Feasible & solvent ({liveCalculatedSteps} blocks)
+                  <span style={{ color: 'var(--accent-green)', fontWeight: '700' }}>
+                    ✓ Solvency Verified ({periodTotalUnits} milestone blocks)
                   </span>
                 )}
               </div>
@@ -364,25 +322,84 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
             <button
               type="submit"
               className="btn-primary"
-              disabled={exceedsMaxSteps || isOverAllocatingCashflow}
+              disabled={hasCashflowDeficit}
             >
-              <Save size={16} /> Save Settings & Unlock Tracker
+              <Save size={16} /> Save Settings & Generate Blocks
             </button>
           </div>
         </form>
       </div>
 
-      {/* 50 / 30 / 20 Growth Breakdown */}
+      {/* Goal Savings Milestones (Month & Year Blocks) */}
+      <div className="finance-card">
+        <div className="card-header">
+          <div>
+            <div className="card-title">
+              <TrendingUp size={20} color="var(--primary)" />
+              <span>Goal Savings Milestones ({activeCadence === 'year' ? `${activeDuration} Year Plan` : `${activeDuration} Month Plan`})</span>
+            </div>
+            <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+              Target: {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })} · Each block represents {currency}{activeTargetPerBlock.toLocaleString('en-US', { minimumFractionDigits: 2 })}. Click a block when you deposit savings.
+            </div>
+          </div>
+
+          <div style={{ textAlign: 'right' }}>
+            <div style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+              {currency}{totalSavedFromMatrix.toLocaleString('en-US', { minimumFractionDigits: 2 })} <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>/ {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div style={{ fontSize: '0.8rem', fontWeight: '700', color: 'var(--accent-green)' }}>
+              {savedBoxes.length} of {activeTotalUnits} blocks completed ({matrixProgressPercent}%)
+            </div>
+          </div>
+        </div>
+
+        <div className="progress-bar-bg" style={{ height: '8px', marginBottom: '16px' }}>
+          <div
+            className="progress-bar-fill"
+            style={{ width: `${matrixProgressPercent}%`, background: 'var(--accent-green)' }}
+          />
+        </div>
+
+        {activeGoal > 0 ? (
+          <div className="matrix-grid">
+            {Array.from({ length: activeTotalUnits }).map((_, idx) => {
+              const blockNum = idx + 1;
+              const isSaved = savedBoxes.includes(blockNum);
+              const label = activeCadence === 'year' && activeDuration > 1 ? `Year ${blockNum}` : `Month ${blockNum}`;
+              return (
+                <div
+                  key={blockNum}
+                  className={`matrix-box ${isSaved ? 'saved' : ''}`}
+                  onClick={() => handleToggleBox(blockNum)}
+                  title={`${label}: ${currency}${activeTargetPerBlock}`}
+                >
+                  <span>{isSaved ? '✓ Done' : label}</span>
+                  <span className="matrix-box-sub">{currency}{activeTargetPerBlock.toFixed(0)}</span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="empty-state">
+            <p>No savings goal set yet.</p>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+              Set your target amount and duration above to generate your milestone schedule.
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* 50 / 30 / 20 Budget Allocation */}
       {parsedIncome > 0 && (
-        <div className="harmony-card">
+        <div className="finance-card">
           <div className="card-header">
             <div>
               <div className="card-title">
-                <Compass size={22} color="var(--coffee-primary)" />
-                <span>50 / 30 / 20 Allocation Model</span>
+                <Compass size={20} color="var(--primary)" />
+                <span>50 / 30 / 20 Budget Allocation</span>
               </div>
-              <div style={{ fontSize: '0.84rem', color: 'var(--mocha-muted)', marginTop: '2px' }}>
-                Ideal distribution on {currency}{parsedIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })} monthly income.
+              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                Mathematical benchmark based on {currency}{parsedIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })} monthly income.
               </div>
             </div>
           </div>
@@ -392,13 +409,13 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
               <div>
                 <div className="rule-percentage">50%</div>
                 <div className="rule-title">Needs</div>
-                <div className="rule-desc">Essentials: Rent, groceries, utilities, commute, insurance.</div>
+                <div className="rule-desc">Essential living expenses: Rent, groceries, bills, healthcare.</div>
               </div>
               <div>
                 <div className="rule-target-amount">
                   Target: {currency}{needsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
-                <div style={{ fontSize: '0.82rem', color: 'var(--mocha-muted)', marginTop: '4px' }}>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                   Spent: {currency}{actualNeeds.toFixed(2)} ({needsTarget > 0 ? ((actualNeeds / needsTarget) * 100).toFixed(0) : 0}%)
                 </div>
                 <div className="progress-bar-bg">
@@ -417,13 +434,13 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
               <div>
                 <div className="rule-percentage">30%</div>
                 <div className="rule-title">Wants</div>
-                <div className="rule-desc">Lifestyle: Coffee, restaurants, entertainment, subscriptions.</div>
+                <div className="rule-desc">Discretionary spending: Dining out, leisure, shopping, subscriptions.</div>
               </div>
               <div>
                 <div className="rule-target-amount">
                   Target: {currency}{wantsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
-                <div style={{ fontSize: '0.82rem', color: 'var(--mocha-muted)', marginTop: '4px' }}>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                   Spent: {currency}{totalWantsWithOther.toFixed(2)} ({wantsTarget > 0 ? ((totalWantsWithOther / wantsTarget) * 100).toFixed(0) : 0}%)
                 </div>
                 <div className="progress-bar-bg">
@@ -431,7 +448,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
                     className="progress-bar-fill"
                     style={{
                       width: `${Math.min(100, wantsTarget > 0 ? (totalWantsWithOther / wantsTarget) * 100 : 0)}%`,
-                      background: 'var(--caramel-accent)'
+                      background: 'var(--cat-food)'
                     }}
                   />
                 </div>
@@ -441,14 +458,14 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
             <div className="rule-box savings">
               <div>
                 <div className="rule-percentage">20%</div>
-                <div className="rule-title">Savings & Growth</div>
-                <div className="rule-desc">Future: Emergency fund, investments, debt acceleration.</div>
+                <div className="rule-title">Savings & Investments</div>
+                <div className="rule-desc">Capital accumulation: Emergency funds, retirement, debt payoff.</div>
               </div>
               <div>
                 <div className="rule-target-amount">
                   Target: {currency}{savingsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
-                <div style={{ fontSize: '0.82rem', color: 'var(--mocha-muted)', marginTop: '4px' }}>
+                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                   Retained: {currency}{actualSavings.toFixed(2)} ({savingsTarget > 0 ? ((actualSavings / savingsTarget) * 100).toFixed(0) : 0}%)
                 </div>
                 <div className="progress-bar-bg">
@@ -456,7 +473,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
                     className="progress-bar-fill"
                     style={{
                       width: `${Math.min(100, savingsTarget > 0 ? (actualSavings / savingsTarget) * 100 : 0)}%`,
-                      background: 'var(--coffee-primary)'
+                      background: 'var(--accent-green)'
                     }}
                   />
                 </div>
@@ -465,73 +482,6 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
           </div>
         </div>
       )}
-
-      {/* Savings Goal Tracker — Blur-Lock Protected */}
-      <div className="savings-tracker-wrapper">
-        
-        {isSettingsLocked && (
-          <div className="blur-lock-overlay">
-            <div className="blur-lock-card">
-              <div className="blur-lock-icon">🔒</div>
-              <h4>Savings Goal Tracker Locked</h4>
-              <p>
-                Enter your target savings goal and the amount to save per {unitName} above, then click <strong>"Save Settings & Unlock Tracker"</strong> to generate your milestone blocks.
-              </p>
-            </div>
-          </div>
-        )}
-
-        <div className={`savings-matrix-container ${isSettingsLocked ? 'is-blurred' : ''}`}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <TrendingUp size={22} color="var(--coffee-primary)" />
-                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--coffee-dark)' }}>
-                  Savings Goal Milestones
-                </h3>
-              </div>
-              <p style={{ fontSize: '0.86rem', color: 'var(--mocha-muted)', marginTop: '4px' }}>
-                Goal: {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })} in {totalActiveSteps} steps of {currency}{activeStep.toLocaleString('en-US', { minimumFractionDigits: 2 })} each. Click any block when you save!
-              </p>
-            </div>
-
-            <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '1.45rem', fontWeight: '800', color: 'var(--coffee-dark)' }}>
-                {currency}{totalSavedFromMatrix.toLocaleString('en-US', { minimumFractionDigits: 2 })} <span style={{ fontSize: '0.88rem', color: 'var(--mocha-muted)', fontWeight: '600' }}>/ {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
-              </div>
-              <div style={{ fontSize: '0.84rem', fontWeight: '700', color: 'var(--coffee-primary)' }}>
-                {savedBoxes.length} of {totalActiveSteps} done ({matrixProgressPercent}%)
-              </div>
-            </div>
-          </div>
-
-          <div className="progress-bar-bg" style={{ height: '12px', marginTop: '16px', marginBottom: '22px' }}>
-            <div
-              className="progress-bar-fill"
-              style={{ width: `${matrixProgressPercent}%` }}
-            />
-          </div>
-
-          <div className="matrix-grid">
-            {Array.from({ length: totalActiveSteps }).map((_, idx) => {
-              const boxNum = idx + 1;
-              const isSaved = savedBoxes.includes(boxNum);
-              return (
-                <div
-                  key={boxNum}
-                  className={`matrix-box ${isSaved ? 'saved' : ''}`}
-                  onClick={() => handleToggleBox(boxNum)}
-                  title={`${activeUnitPrefix} ${boxNum}: ${currency}${activeStep}`}
-                >
-                  <span>{isSaved ? '✓' : `${activeUnitPrefix} ${boxNum}`}</span>
-                  <span className="matrix-box-sub">{currency}{activeStep}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-      </div>
 
     </div>
   );

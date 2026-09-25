@@ -39,9 +39,9 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
 
   const getScoreBadge = (score) => {
     if (score >= 85) return { label: 'Optimal', color: 'var(--color-success)', bg: 'var(--color-success-bg)' };
-    if (score >= 70) return { label: 'Healthy', color: 'var(--coffee-primary)', bg: 'var(--coffee-light)' };
-    if (score >= 50) return { label: 'Watch Out', color: 'var(--caramel-accent)', bg: 'var(--caramel-light)' };
-    return { label: 'Critical', color: 'var(--color-danger)', bg: 'var(--color-danger-bg)' };
+    if (score >= 70) return { label: 'Healthy', color: 'var(--primary)', bg: 'var(--primary-light)' };
+    if (score >= 50) return { label: 'Caution', color: 'var(--color-warning)', bg: 'var(--color-warning-bg)' };
+    return { label: 'Over Limit', color: 'var(--color-danger)', bg: 'var(--color-danger-bg)' };
   };
 
   const badge = getScoreBadge(displayScore);
@@ -50,7 +50,7 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon-wrapper" style={{ background: 'var(--coffee-light)', color: 'var(--coffee-primary)' }}>
+          <div className="stat-icon-wrapper stat-icon-income">
             <Award size={24} />
           </div>
           <div>
@@ -65,7 +65,7 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper stat-icon-remaining">
+          <div className="stat-icon-wrapper stat-icon-budget">
             <Coins size={24} />
           </div>
           <div>
@@ -81,54 +81,56 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
           <div>
             <div className="stat-label">Largest Expense</div>
             <div className="stat-value">{currency}{maxExpense.amount.toFixed(2)}</div>
-            <div style={{ fontSize: '0.8rem', color: 'var(--mocha-muted)', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>
               {maxExpense.desc}
             </div>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper" style={{ background: 'var(--bg-surface)', color: 'var(--coffee-dark)' }}>
+          <div className="stat-icon-wrapper stat-icon-remaining">
             <Calendar size={24} />
           </div>
           <div>
-            <div className="stat-label">Logged Entries</div>
+            <div className="stat-label">Total Entries</div>
             <div className="stat-value">{count}</div>
           </div>
         </div>
       </div>
 
-      <div className="harmony-card">
+      <div className="finance-card">
         <div className="card-header">
           <div>
             <div className="card-title">
-              <PieChart size={20} color="var(--coffee-primary)" />
-              <span>Category Distribution (Universal Theory)</span>
+              <PieChart size={20} color="var(--primary)" />
+              <span>Category Distribution</span>
             </div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--mocha-muted)', marginTop: '2px' }}>
-              Visual breakdown of your expenses mapped by dedicated category color.
+            <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+              Expenditures grouped by category with dedicated color tracking.
             </div>
           </div>
         </div>
 
         {categoryArray.length === 0 ? (
           <div className="empty-state">
-            <p>No expenses recorded yet.</p>
-            <div className="hint">Log your expenses in the ledger to view this distribution</div>
+            <p>No expenditures recorded yet.</p>
+            <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+              Log transactions in your ledger to generate distribution analysis.
+            </div>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {categoryArray.map((item) => {
               const catTheme = getCategoryColor(item.category);
               return (
                 <div key={item.category} style={{ background: 'var(--bg-surface)', padding: '14px 18px', borderRadius: 'var(--radius-md)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '800', fontSize: '0.95rem', color: 'var(--coffee-dark)' }}>
-                      <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: catTheme.color }} />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: '700', fontSize: '0.92rem', color: 'var(--text-main)' }}>
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: catTheme.color }} />
                       <span>{item.category}</span>
                     </div>
-                    <div style={{ fontWeight: '800', color: 'var(--coffee-dark)' }}>
-                      {currency}{item.amount.toFixed(2)} <span style={{ color: 'var(--mocha-muted)', fontSize: '0.85rem', fontWeight: '600' }}>({item.percentage}%)</span>
+                    <div style={{ fontWeight: '800', color: 'var(--text-main)' }}>
+                      {currency}{item.amount.toFixed(2)} <span style={{ color: 'var(--text-muted)', fontSize: '0.84rem', fontWeight: '600' }}>({item.percentage}%)</span>
                     </div>
                   </div>
                   <div className="progress-bar-bg" style={{ height: '8px', marginTop: 0 }}>
@@ -147,39 +149,39 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
         )}
       </div>
 
-      <div className="harmony-card">
+      <div className="finance-card">
         <div className="card-header">
           <div className="card-title">
-            <BarChart3 size={20} color="var(--coffee-primary)" />
-            <span>Cozy Financial Principles</span>
+            <BarChart3 size={20} color="var(--primary)" />
+            <span>Financial Management Benchmarks</span>
           </div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-          <div style={{ padding: '18px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1.5px solid var(--border-card)' }}>
-            <div style={{ fontWeight: '800', color: 'var(--coffee-primary)', marginBottom: '4px' }}>
-              Mindful Espresso Log
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+          <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border-card)' }}>
+            <div style={{ fontWeight: '800', color: 'var(--primary)', marginBottom: '4px' }}>
+              Immediate Logging
             </div>
-            <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Logging expenses right after paying brings calm awareness and eliminates month-end financial shock.
+            <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+              Record expenses immediately upon completion to maintain accurate real-time cashflow awareness.
             </div>
           </div>
 
-          <div style={{ padding: '18px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1.5px solid var(--border-card)' }}>
-            <div style={{ fontWeight: '800', color: 'var(--coffee-primary)', marginBottom: '4px' }}>
+          <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border-card)' }}>
+            <div style={{ fontWeight: '800', color: 'var(--primary)', marginBottom: '4px' }}>
               Pay Yourself First
             </div>
-            <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Reserve 20% into savings or emergency funds the moment income is received, before discretionary purchases.
+            <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+              Transfer 20% into savings or emergency funds directly when income is received, before discretionary expenses.
             </div>
           </div>
 
-          <div style={{ padding: '18px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1.5px solid var(--border-card)' }}>
-            <div style={{ fontWeight: '800', color: 'var(--coffee-primary)', marginBottom: '4px' }}>
-              Solvent Milestones
+          <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border-card)' }}>
+            <div style={{ fontWeight: '800', color: 'var(--primary)', marginBottom: '4px' }}>
+              Mathematical Solvency
             </div>
-            <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              Always ensure your daily, weekly, or monthly savings targets never exceed your real money in hand.
+            <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+              Ensure monthly and annual savings targets strictly remain within your unallocated disposable income.
             </div>
           </div>
         </div>

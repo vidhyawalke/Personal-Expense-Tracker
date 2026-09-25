@@ -1,45 +1,35 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
-import Dashboard from './components/Dashboard';
 import ExpenseList from './components/ExpenseList';
 import BudgetPlanner from './components/BudgetPlanner';
-import Analytics from './components/Analytics';
 import ClockWidget from './components/ClockWidget';
 import { 
-  Coffee, 
-  CalendarCheck, 
-  CreditCard, 
-  Home, 
-  Search, 
-  LayoutDashboard, 
+  Wallet,
   Receipt, 
   Target, 
-  BarChart2, 
   User, 
-  Edit3, 
   X, 
   Save, 
-  ArrowRight,
-  TrendingUp
+  ArrowRight
 } from 'lucide-react';
 
 const STORAGE_KEYS = {
-  expenses: 'crema_expenses',
-  budget: 'crema_budget',
-  userProfile: 'crema_user_profile',
+  expenses: 'finance_tracker_expenses',
+  budget: 'finance_tracker_budget',
+  userProfile: 'finance_tracker_profile',
 };
 
 const DEFAULT_BUDGET = {
   monthly_income: 0,
   monthly_budget: 0,
   categories_budget: {},
-  savings_target: { goal: 0, target_box_amount: 0, cadence: 'daily', isConfigSaved: false, saved_boxes: [] },
+  savings_target: { goal: 0, duration: 12, cadence: 'month', target_box_amount: 0, isConfigSaved: false, saved_boxes: [] },
   checklist: [
-    { id: 1, text: 'Review today\'s coffee & daily purchases', checked: false },
-    { id: 2, text: 'Log all transactions into ledger', checked: false },
-    { id: 3, text: 'Check money in hand vs spending limit', checked: false },
-    { id: 4, text: 'Mark off your savings milestone step', checked: false },
-    { id: 5, text: 'Plan tomorrow\'s essential budget', checked: false },
+    { id: 1, text: 'Review today\'s transactions', checked: false },
+    { id: 2, text: 'Log all daily expenditures', checked: false },
+    { id: 3, text: 'Monitor spending pace vs budget', checked: false },
+    { id: 4, text: 'Deposit monthly/yearly savings milestone', checked: false },
+    { id: 5, text: 'Review upcoming fixed bills', checked: false },
   ]
 };
 
@@ -63,7 +53,7 @@ function saveToStorage(key, value) {
 }
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState('tracker');
   const [expenses, setExpenses] = useState(() => loadFromStorage(STORAGE_KEYS.expenses, []));
   const [budgetData, setBudgetData] = useState(() => loadFromStorage(STORAGE_KEYS.budget, DEFAULT_BUDGET));
   const [userProfile, setUserProfile] = useState(() => loadFromStorage(STORAGE_KEYS.userProfile, null));
@@ -80,14 +70,14 @@ export default function App() {
 
   const currency = userProfile?.currency || '₹';
 
-  // Financial Analyst Budget Warnings
+  // Mathematical Budget Warnings
   const evaluateBudgetWarning = useCallback((expensesList, currentBudget, currSym) => {
     const total = round2(expensesList.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0));
     const limit = Number(currentBudget?.monthly_budget) || 0;
     if (limit > 0 && total > limit) {
-      setWarning(`Budget Warning: Total spent is ${currSym}${total.toFixed(2)} exceeding your ${currSym}${limit.toFixed(2)} limit by ${currSym}${(total - limit).toFixed(2)}.`);
+      setWarning(`Budget Warning: Total spent is ${currSym}${total.toFixed(2)} exceeding your ${currSym}${limit.toFixed(2)} spending limit by ${currSym}${(total - limit).toFixed(2)}.`);
     } else if (limit > 0 && total >= limit * 0.85) {
-      setWarning(`Cashflow Notice: ${((total / limit) * 100).toFixed(0)}% of monthly budget utilized — only ${currSym}${(limit - total).toFixed(2)} remaining.`);
+      setWarning(`Notice: ${((total / limit) * 100).toFixed(0)}% of monthly budget utilized — only ${currSym}${(limit - total).toFixed(2)} remaining.`);
     } else {
       setWarning(null);
     }
@@ -153,7 +143,7 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `crema-expenses-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `finance-expenses-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -231,25 +221,25 @@ export default function App() {
     setIsEditProfileModalOpen(false);
   };
 
-  // Progressive Onboarding: shown first when user has not yet set their profile
+  // Onboarding Setup
   if (!userProfile?.name) {
     return (
       <div className="setup-overlay">
         <div className="setup-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
-            <div className="crema-coffee-icon-box">
-              ☕
+            <div className="brand-icon-square">
+              ₹
             </div>
             <div>
-              <h2>Welcome to Crema</h2>
-              <div style={{ fontSize: '0.86rem', color: 'var(--caramel-accent)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Cozy Personal Budget & Expense Tracker
+              <h2>Personal Expense Tracker</h2>
+              <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', fontWeight: '600' }}>
+                Budget & Goal Savings Setup
               </div>
             </div>
           </div>
           
           <p>
-            Brew your personal budget with calm clarity. Enter your name and monthly cashflow baseline to start.
+            Please set your baseline parameters to initialize your personal budget and savings ledger.
           </p>
 
           <form onSubmit={handleOnboardingSubmit}>
@@ -310,7 +300,7 @@ export default function App() {
 
             <div style={{ marginTop: '24px' }}>
               <button type="submit" className="btn-primary" style={{ width: '100%', padding: '12px' }}>
-                Brew My Budget Tracker <ArrowRight size={18} />
+                Open Financial Workspace <ArrowRight size={18} />
               </button>
             </div>
           </form>
@@ -325,9 +315,9 @@ export default function App() {
       {isEditProfileModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsEditProfileModalOpen(false)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--coffee-dark)' }}>
-                Edit Financial Baseline
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                Edit Profile & Baseline
               </h3>
               <button
                 className="btn-icon"
@@ -409,119 +399,71 @@ export default function App() {
         </div>
       )}
 
-      {/* Header Banner (Matching Image 4) */}
-      <header className="crema-header-banner">
-        <div className="crema-brand-info">
-          <div className="crema-coffee-icon-box">
-            ☕
+      {/* Header Area (Clean, Image 1 fix: Profile button, Image 2 fix: Removed 4 icons) */}
+      <header className="app-header">
+        <div className="brand-section">
+          <div className="brand-icon-square">
+            <Wallet size={24} />
           </div>
           <div>
-            <div className="crema-title">
-              Crema Tracker
+            <div className="brand-title">
+              Personal Expense Tracker
             </div>
-            <div className="crema-tagline">
-              Personal Budget & Expense Tracker · Welcome, {userProfile.name}
+            <div className="brand-subtitle">
+              Budget & Savings Management · {userProfile.name}
             </div>
           </div>
         </div>
 
-        {/* Minimalist Line Illustrations (Image 4 match) */}
-        <div className="header-illustrations">
-          <div className="header-illustration-item" title="Calendar Check">
-            <CalendarCheck size={26} strokeWidth={1.8} />
-            <span className="header-illustration-label">Log</span>
-          </div>
-          <div className="header-illustration-item" title="Card & Cashflow">
-            <CreditCard size={26} strokeWidth={1.8} />
-            <span className="header-illustration-label">Card</span>
-          </div>
-          <div className="header-illustration-item" title="Home & Needs">
-            <Home size={26} strokeWidth={1.8} />
-            <span className="header-illustration-label">Home</span>
-          </div>
-          <div className="header-illustration-item" title="Analytics & Growth">
-            <Search size={26} strokeWidth={1.8} />
-            <span className="header-illustration-label">Audits</span>
-          </div>
-        </div>
-
-        <div className="header-actions-group">
+        <div className="header-controls">
           <button
             type="button"
-            className="btn-baseline-edit"
+            className="btn-profile"
             onClick={handleOpenEditProfile}
-            title="Edit Baseline Details"
+            title="Edit Profile & Baseline"
           >
-            <User size={15} /> {currency} Baseline
+            <User size={15} /> Profile
           </button>
           <ClockWidget />
         </div>
       </header>
 
-      {/* Tab Navigation */}
+      {/* Navigation (Only 2 sections: Tracker and Goal) */}
       <nav className="nav-tabs">
         <button
-          className={`nav-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
-          onClick={() => setActiveTab('dashboard')}
+          className={`nav-tab-btn ${activeTab === 'tracker' ? 'active' : ''}`}
+          onClick={() => setActiveTab('tracker')}
         >
-          <LayoutDashboard size={18} /> Tracker & Home
+          <Receipt size={17} /> Expense Tracker
         </button>
         <button
-          className={`nav-tab-btn ${activeTab === 'expenses' ? 'active' : ''}`}
-          onClick={() => setActiveTab('expenses')}
+          className={`nav-tab-btn ${activeTab === 'goal' ? 'active' : ''}`}
+          onClick={() => setActiveTab('goal')}
         >
-          <Receipt size={18} /> Expenses Ledger
-        </button>
-        <button
-          className={`nav-tab-btn ${activeTab === 'budget' ? 'active' : ''}`}
-          onClick={() => setActiveTab('budget')}
-        >
-          <Target size={18} /> Budget & Milestones
-        </button>
-        <button
-          className={`nav-tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
-          onClick={() => setActiveTab('analytics')}
-        >
-          <BarChart2 size={18} /> Analytics & Reports
+          <Target size={17} /> Savings Goal
         </button>
       </nav>
 
-      {/* Content Area */}
+      {/* Content Area (Only 2 sections) */}
       <main>
         <div className="tab-content" key={activeTab}>
-          {activeTab === 'dashboard' && (
-            <Dashboard
-              expenses={expenses}
-              budgetData={budgetData}
-              onToggleChecklist={handleToggleChecklist}
-              warning={warning}
-              currency={currency}
-              onAddExpense={handleAddExpense}
-              onNavigateTab={setActiveTab}
-            />
-          )}
-          {activeTab === 'expenses' && (
+          {activeTab === 'tracker' && (
             <ExpenseList
               expenses={expenses}
+              budgetData={budgetData}
               onAddExpense={handleAddExpense}
               onUpdateExpense={handleUpdateExpense}
               onDeleteExpense={handleDeleteExpense}
               onExportCSV={handleExportCSV}
               currency={currency}
+              warning={warning}
             />
           )}
-          {activeTab === 'budget' && (
+          {activeTab === 'goal' && (
             <BudgetPlanner
               budgetData={budgetData}
               onUpdateBudget={handleUpdateBudget}
               expenses={expenses}
-              currency={currency}
-            />
-          )}
-          {activeTab === 'analytics' && (
-            <Analytics
-              expenses={expenses}
-              budgetData={budgetData}
               currency={currency}
             />
           )}
