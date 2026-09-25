@@ -14,14 +14,14 @@
 .app-header {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  padding: 24px 32px;
-  margin-bottom: 24px;
+  border-radius: var(--radius-lg);
+  padding: 20px 28px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 16px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -39,41 +39,40 @@
 }
 
 .brand-icon-wrapper {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--forest-800) 0%, var(--forest-700) 100%);
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: var(--forest-800);
   color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 10px rgba(27, 67, 50, 0.2);
 }
 
 .brand-title {
-  font-size: 1.6rem;
-  font-weight: 800;
+  font-size: 1.4rem;
+  font-weight: 700;
   color: var(--forest-900);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   line-height: 1.2;
 }
 
 .brand-subtitle {
-  font-size: 0.88rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
-  font-weight: 500;
+  font-weight: 400;
   margin-top: 2px;
 }
 
 /* Real-Time Clock Widget */
 .clock-widget {
-  background: var(--sage-50);
-  border: 1px solid var(--sage-200);
-  border-radius: var(--radius-lg);
-  padding: 10px 18px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .clock-live-indicator {
@@ -109,11 +108,11 @@
 /* Tab Navigation */
 .nav-tabs {
   display: flex;
-  gap: 8px;
-  margin-bottom: 28px;
+  gap: 4px;
+  margin-bottom: 24px;
   background: var(--bg-card);
-  padding: 6px;
-  border-radius: var(--radius-lg);
+  padding: 4px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-subtle);
   overflow-x: auto;
   box-shadow: var(--shadow-sm);
@@ -121,20 +120,20 @@
 
 .nav-tab-btn {
   flex: 1;
-  min-width: 140px;
+  min-width: 120px;
   background: transparent;
   border: none;
-  padding: 10px 18px;
-  border-radius: var(--radius-md);
-  font-size: 0.92rem;
-  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  transition: all 0.15s ease;
+  gap: 6px;
+  transition: background 0.12s ease, color 0.12s ease;
 }
 
 .nav-tab-btn:hover {
@@ -145,7 +144,6 @@
 .nav-tab-btn.active {
   background: var(--forest-800);
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(27, 67, 50, 0.18);
 }
 
 /* Cards & Layout Containers */
@@ -153,9 +151,8 @@
   background: var(--bg-card);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 20px;
   box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s ease;
 }
 
 .harmony-card:hover {
@@ -192,17 +189,17 @@
   background: var(--bg-card);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
-  padding: 20px 24px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   box-shadow: var(--shadow-sm);
 }
 
 .stat-icon-wrapper {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-md);
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -301,10 +298,10 @@
 
 .badge-category {
   display: inline-block;
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 0.78rem;
+  font-weight: 500;
   background: var(--sage-100);
   color: var(--forest-800);
   border: 1px solid var(--sage-200);
@@ -314,39 +311,40 @@
 .btn-primary {
   background: var(--forest-800);
   color: #ffffff;
-  border: none;
-  padding: 9px 18px;
+  border: 1px solid var(--forest-800);
+  padding: 8px 16px;
   border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 500;
+  font-size: 0.88rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.15s ease;
+  gap: 6px;
+  transition: background 0.12s ease;
 }
 
 .btn-primary:hover {
   background: var(--forest-700);
+  border-color: var(--forest-700);
 }
 
 .btn-secondary {
-  background: var(--bg-surface);
+  background: var(--bg-card);
   color: var(--text-secondary);
   border: 1px solid var(--border-subtle);
-  padding: 9px 16px;
+  padding: 8px 14px;
   border-radius: var(--radius-sm);
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 500;
+  font-size: 0.88rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  transition: all 0.15s ease;
+  gap: 6px;
+  transition: background 0.12s ease;
 }
 
 .btn-secondary:hover {
-  background: var(--border-subtle);
+  background: var(--bg-surface);
   color: var(--text-main);
 }
 
@@ -354,13 +352,13 @@
   background: transparent;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
-  padding: 6px;
+  padding: 5px;
   color: var(--text-muted);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.15s ease;
+  transition: background 0.12s ease;
 }
 
 .btn-icon:hover {
@@ -390,19 +388,19 @@
 
 .form-input {
   width: 100%;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-sm);
   background: var(--bg-card);
   color: var(--text-main);
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition: border-color 0.12s ease;
 }
 
 .form-input:focus {
   border-color: var(--sage-500);
-  box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.15);
+  box-shadow: 0 0 0 2px rgba(107, 158, 114, 0.18);
 }
 
 /* Daily Discipline Checklist */
@@ -464,8 +462,7 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(8, 28, 21, 0.45);
-  backdrop-filter: blur(4px);
+  background: rgba(26, 46, 30, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -478,8 +475,8 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-card);
   width: 100%;
-  max-width: 480px;
-  padding: 28px;
+  max-width: 460px;
+  padding: 24px;
   box-shadow: var(--shadow-lg);
 }
 
@@ -502,7 +499,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
-  padding: 22px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -546,29 +543,29 @@
   background: var(--bg-card);
   border: 1px solid var(--border-card);
   border-radius: var(--radius-lg);
-  padding: 28px;
+  padding: 20px;
 }
 
 .matrix-grid {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
-  gap: 8px;
-  margin-top: 20px;
+  gap: 6px;
+  margin-top: 16px;
 }
 
 .matrix-box {
   aspect-ratio: 1;
-  border-radius: var(--radius-sm);
+  border-radius: 2px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-surface);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.72rem;
+  font-weight: 500;
   color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: background 0.12s ease;
 }
 
 .matrix-box:hover {
@@ -581,7 +578,7 @@
   background: var(--forest-800);
   border-color: var(--forest-800);
   color: #ffffff;
-  font-weight: 700;
+  font-weight: 600;
 }
 
 /* Progress Bars */

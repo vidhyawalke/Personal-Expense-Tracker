@@ -1,52 +1,53 @@
 :root {
-  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Growth & Harmony Color System */
-  --forest-900: #081c15;
-  --forest-800: #1b4332;
-  --forest-700: #2d6a4f;
-  --sage-600: #40916c;
-  --sage-500: #52b788;
-  --sage-400: #74c69d;
-  --sage-200: #b7e4c7;
-  --sage-100: #d8f3dc;
-  --sage-50: #f4fbf7;
+  /* Growth Color System — calm, AI-minimal */
+  --forest-900: #1a2e1e;
+  --forest-800: #2d4a32;
+  --forest-700: #3d6142;
+  --sage-600:   #4e7a54;
+  --sage-500:   #6b9e72;
+  --sage-400:   #8dba94;
+  --sage-200:   #bdd8c0;
+  --sage-100:   #deeee0;
+  --sage-50:    #f1f8f2;
 
-  --bg-app: #f7faf8;
-  --bg-card: #ffffff;
-  --bg-surface: #edf3ef;
-  --border-subtle: #e2ece6;
-  --border-card: #e5ece8;
+  --bg-app:     #f5f7f5;
+  --bg-card:    #ffffff;
+  --bg-surface: #edf2ee;
+  --border-subtle: #dce6dd;
+  --border-card:   #e0eae1;
 
-  --text-main: #14281d;
-  --text-secondary: #3d5246;
-  --text-muted: #6b8074;
+  --text-main:      #1a2e1e;
+  --text-secondary: #3a5240;
+  --text-muted:     #6b8570;
 
-  --color-success: #15803d;
-  --color-success-bg: #f0fdf4;
-  --color-success-border: #bbf7d0;
+  --color-success:        #2e7d32;
+  --color-success-bg:     #f0f7f0;
+  --color-success-border: #a5d6a7;
 
-  --color-warning: #b45309;
-  --color-warning-bg: #fffbeb;
-  --color-warning-border: #fde68a;
+  --color-warning:        #8c6d1f;
+  --color-warning-bg:     #fdf8ec;
+  --color-warning-border: #e8d08a;
 
-  --color-danger: #b91c1c;
-  --color-danger-bg: #fef2f2;
-  --color-danger-border: #fecaca;
+  --color-danger:         #c0392b;
+  --color-danger-bg:      #fdf3f2;
+  --color-danger-border:  #f1b0aa;
 
-  --color-info: #1d4ed8;
-  --color-info-bg: #eff6ff;
-  --color-info-border: #bfdbfe;
+  --color-info:           #1565c0;
+  --color-info-bg:        #f0f4fc;
+  --color-info-border:    #90b8e8;
 
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
+  /* Flat, square-ish radii */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 10px;
 
-  --shadow-sm: 0 1px 2px 0 rgba(16, 37, 27, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(16, 37, 27, 0.05), 0 2px 4px -1px rgba(16, 37, 27, 0.03);
-  --shadow-lg: 0 10px 15px -3px rgba(16, 37, 27, 0.06), 0 4px 6px -2px rgba(16, 37, 27, 0.02);
+  --shadow-sm: 0 1px 3px 0 rgba(26, 46, 30, 0.06);
+  --shadow-md: 0 2px 6px -1px rgba(26, 46, 30, 0.07);
+  --shadow-lg: 0 8px 20px -4px rgba(26, 46, 30, 0.10);
 
   font-family: var(--font-sans);
   line-height: 1.5;

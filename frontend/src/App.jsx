@@ -8,147 +8,129 @@ import ClockWidget from './components/ClockWidget';
 import harmonyLogo from './assets/harmony_logo.png';
 import { LayoutDashboard, Receipt, Target, BarChart2 } from 'lucide-react';
 
-const API_BASE = 'http://localhost:8000/api';
+const STORAGE_KEYS = {
+  expenses: 'harmony_expenses',
+  budget: 'harmony_budget',
+};
+
+const DEFAULT_BUDGET = {
+  monthly_income: 3500,
+  monthly_budget: 2400,
+  categories_budget: {},
+  savings_target: { goal: 20000, target_box_amount: 200, saved_boxes: [] },
+  checklist: [
+    { id: 1, text: 'Review yesterday\'s expenses', checked: false },
+    { id: 2, text: 'Log all today\'s transactions', checked: false },
+    { id: 3, text: 'Check budget remaining balance', checked: false },
+    { id: 4, text: 'Transfer savings amount', checked: false },
+    { id: 5, text: 'Review next week\'s plan', checked: false },
+  ]
+};
+
+function loadFromStorage(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function saveToStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // Storage full or unavailable
+  }
+}
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [expenses, setExpenses] = useState([]);
-  const [budgetData, setBudgetData] = useState({
-    monthly_income: 3500,
-    monthly_budget: 2400,
-    categories_budget: {},
-    savings_target: { goal: 20000, target_box_amount: 200, saved_boxes: [] },
-    checklist: []
-  });
+  const [expenses, setExpenses] = useState(() => loadFromStorage(STORAGE_KEYS.expenses, []));
+  const [budgetData, setBudgetData] = useState(() => loadFromStorage(STORAGE_KEYS.budget, DEFAULT_BUDGET));
   const [warning, setWarning] = useState(null);
 
   const evaluateBudgetWarning = useCallback((expensesList, currentBudget) => {
     const total = expensesList.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
     const limit = Number(currentBudget?.monthly_budget) || 2400;
-
     if (limit > 0 && total > limit) {
-      setWarning(`Budget Notice: Current monthly expenditures ($${total.toFixed(2)}) exceed the target allocation of $${limit.toFixed(2)} by $${(total - limit).toFixed(2)}.`);
+      setWarning(`Budget exceeded: $${total.toFixed(2)} spent vs $${limit.toFixed(2)} limit (over by $${(total - limit).toFixed(2)}).`);
     } else if (limit > 0 && total >= limit * 0.85) {
-      setWarning(`Budget Notice: You have utilized ${((total / limit) * 100).toFixed(0)}% of your monthly budget allocation ($${(limit - total).toFixed(2)} remaining).`);
+      setWarning(`${((total / limit) * 100).toFixed(0)}% of budget used — $${(limit - total).toFixed(2)} remaining.`);
     } else {
       setWarning(null);
     }
   }, []);
 
-  const fetchData = useCallback(async () => {
-    try {
-      const [expRes, budRes] = await Promise.all([
-        fetch(`${API_BASE}/expenses`),
-        fetch(`${API_BASE}/budget`)
-      ]);
-
-      let loadedExpenses = [];
-      let loadedBudget = budgetData;
-
-      if (expRes.ok) {
-        loadedExpenses = await expRes.json();
-        setExpenses(loadedExpenses);
-      }
-
-      if (budRes.ok) {
-        loadedBudget = await budRes.json();
-        setBudgetData(loadedBudget);
-      }
-
-      evaluateBudgetWarning(loadedExpenses, loadedBudget);
-    } catch {
-      // Backend starting up or disconnected; local state is maintained
-    }
-  }, [budgetData, evaluateBudgetWarning]);
-
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    evaluateBudgetWarning(expenses, budgetData);
+  }, [expenses, budgetData, evaluateBudgetWarning]);
 
-  const handleAddExpense = async (newExpense) => {
-    try {
-      const res = await fetch(`${API_BASE}/expenses`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newExpense)
-      });
-      if (res.ok) {
-        const result = await res.json();
-        const updated = [result.expense, ...expenses];
-        setExpenses(updated);
-        evaluateBudgetWarning(updated, budgetData);
-      }
-    } catch {
-      alert("Failed to save transaction to server.");
-    }
+  const handleAddExpense = (newExpense) => {
+    const id = Date.now();
+    const entry = { id, ...newExpense };
+    const updated = [entry, ...expenses];
+    setExpenses(updated);
+    saveToStorage(STORAGE_KEYS.expenses, updated);
   };
 
-  const handleUpdateExpense = async (id, updatedData) => {
-    try {
-      const res = await fetch(`${API_BASE}/expenses/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedData)
-      });
-      if (res.ok) {
-        const result = await res.json();
-        const updated = expenses.map(e => e.id === id ? result.expense : e);
-        setExpenses(updated);
-        evaluateBudgetWarning(updated, budgetData);
-      }
-    } catch {
-      alert("Failed to update transaction.");
-    }
+  const handleUpdateExpense = (id, updatedData) => {
+    const updated = expenses.map(e => e.id === id ? { ...e, ...updatedData } : e);
+    setExpenses(updated);
+    saveToStorage(STORAGE_KEYS.expenses, updated);
   };
 
-  const handleDeleteExpense = async (id) => {
-    try {
-      const res = await fetch(`${API_BASE}/expenses/${id}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        const updated = expenses.filter(e => e.id !== id);
-        setExpenses(updated);
-        evaluateBudgetWarning(updated, budgetData);
-      }
-    } catch {
-      alert("Failed to delete transaction.");
-    }
+  const handleDeleteExpense = (id) => {
+    const updated = expenses.filter(e => e.id !== id);
+    setExpenses(updated);
+    saveToStorage(STORAGE_KEYS.expenses, updated);
   };
 
-  const handleUpdateBudget = async (newBudgetData) => {
-    try {
-      const res = await fetch(`${API_BASE}/budget`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newBudgetData)
-      });
-      if (res.ok) {
-        const result = await res.json();
-        setBudgetData(result.budget);
-        evaluateBudgetWarning(expenses, result.budget);
-      }
-    } catch {
-      console.log("Failed to update budget on server.");
+  const handleUpdateBudget = (patch) => {
+    const merged = { ...budgetData, ...patch };
+    // Handle nested savings target
+    if (patch.saved_boxes !== undefined) {
+      merged.savings_target = {
+        ...budgetData.savings_target,
+        saved_boxes: patch.saved_boxes
+      };
+      delete merged.saved_boxes;
     }
+    if (patch.checklist !== undefined) {
+      merged.checklist = patch.checklist;
+    }
+    setBudgetData(merged);
+    saveToStorage(STORAGE_KEYS.budget, merged);
   };
 
   const handleToggleChecklist = (checklistId) => {
     const updatedList = (budgetData.checklist || []).map(item =>
       item.id === checklistId ? { ...item, checked: !item.checked } : item
     );
-    const updatedBudget = { ...budgetData, checklist: updatedList };
-    setBudgetData(updatedBudget);
     handleUpdateBudget({ checklist: updatedList });
   };
 
   const handleExportCSV = () => {
-    window.open(`${API_BASE}/export`, '_blank');
+    if (expenses.length === 0) {
+      alert('No expenses to export.');
+      return;
+    }
+    const header = 'ID,Date,Description,Category,Amount';
+    const rows = expenses.map(e =>
+      `${e.id},${e.date},"${e.description}",${e.category || 'Other'},${Number(e.amount).toFixed(2)}`
+    );
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `harmony-expenses-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
     <div className="app-container">
-      
       <header className="app-header">
         <div className="brand-section">
           <img
@@ -161,7 +143,6 @@ export default function App() {
             <p className="brand-subtitle">Cultivate Financial Wellness and Balanced Growth</p>
           </div>
         </div>
-
         <ClockWidget />
       </header>
 
@@ -170,28 +151,25 @@ export default function App() {
           className={`nav-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
           onClick={() => setActiveTab('dashboard')}
         >
-          <LayoutDashboard size={18} /> Dashboard
+          <LayoutDashboard size={16} /> Dashboard
         </button>
-
         <button
           className={`nav-tab-btn ${activeTab === 'expenses' ? 'active' : ''}`}
           onClick={() => setActiveTab('expenses')}
         >
-          <Receipt size={18} /> Expenses
+          <Receipt size={16} /> Expenses
         </button>
-
         <button
           className={`nav-tab-btn ${activeTab === 'budget' ? 'active' : ''}`}
           onClick={() => setActiveTab('budget')}
         >
-          <Target size={18} /> Budget & Growth
+          <Target size={16} /> Budget &amp; Growth
         </button>
-
         <button
           className={`nav-tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
           onClick={() => setActiveTab('analytics')}
         >
-          <BarChart2 size={18} /> Analytics
+          <BarChart2 size={16} /> Analytics
         </button>
       </nav>
 
@@ -204,7 +182,6 @@ export default function App() {
             warning={warning}
           />
         )}
-
         {activeTab === 'expenses' && (
           <ExpenseList
             expenses={expenses}
@@ -214,7 +191,6 @@ export default function App() {
             onExportCSV={handleExportCSV}
           />
         )}
-
         {activeTab === 'budget' && (
           <BudgetPlanner
             budgetData={budgetData}
@@ -222,7 +198,6 @@ export default function App() {
             expenses={expenses}
           />
         )}
-
         {activeTab === 'analytics' && (
           <Analytics
             expenses={expenses}
@@ -230,7 +205,6 @@ export default function App() {
           />
         )}
       </main>
-
     </div>
   );
 }
