@@ -4,42 +4,44 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Olive Green Color System */
-  --forest-900: #2c3a2a;
-  --forest-800: #4a5d3e;
-  --forest-700: #5e7550;
-  --sage-600:   #6e8a5a;
-  --sage-500:   #8ba470;
-  --sage-400:   #a3bb8c;
-  --sage-200:   #c8d8b4;
-  --sage-100:   #e2ecd6;
-  --sage-50:    #f2f6ec;
+  /* Dark Olive Green Palette — #254222 / #99cc66 / #ece2b1 / #cae4c5 */
+  --forest-900: #1a2e19;
+  --forest-800: #254222;
+  --forest-700: #305530;
+  --sage-600:   #4a7a42;
+  --sage-500:   #6da860;
+  --sage-400:   #99cc66;
+  --sage-200:   #cae4c5;
+  --sage-100:   #dbefd8;
+  --sage-50:    #edf7eb;
 
-  --bg-app:     #f4f6f0;
-  --bg-card:    #ffffff;
-  --bg-surface: #eaefe3;
-  --border-subtle: #d5ddc9;
-  --border-card:   #dde5d2;
+  /* Dark background scheme */
+  --bg-app:     #1a2e19;
+  --bg-card:    #223a20;
+  --bg-surface: #2a4828;
+  --border-subtle: #3a5a36;
+  --border-card:   #3d6038;
 
-  --text-main:      #2c3a2a;
-  --text-secondary: #4a5d3e;
-  --text-muted:     #7a8d6e;
+  /* Light text on dark */
+  --text-main:      #ece2b1;
+  --text-secondary: #cae4c5;
+  --text-muted:     #8aab82;
 
-  --color-success:        #4a7c3f;
-  --color-success-bg:     #eef5eb;
-  --color-success-border: #a3cc96;
+  --color-success:        #99cc66;
+  --color-success-bg:     rgba(153, 204, 102, 0.12);
+  --color-success-border: rgba(153, 204, 102, 0.3);
 
-  --color-warning:        #8c6d1f;
-  --color-warning-bg:     #fdf8ec;
-  --color-warning-border: #e8d08a;
+  --color-warning:        #e8c44a;
+  --color-warning-bg:     rgba(232, 196, 74, 0.1);
+  --color-warning-border: rgba(232, 196, 74, 0.25);
 
-  --color-danger:         #c0392b;
-  --color-danger-bg:      #fdf3f2;
-  --color-danger-border:  #f1b0aa;
+  --color-danger:         #e06050;
+  --color-danger-bg:      rgba(224, 96, 80, 0.1);
+  --color-danger-border:  rgba(224, 96, 80, 0.25);
 
-  --color-info:           #3d7a8a;
-  --color-info-bg:        #eef6f8;
-  --color-info-border:    #90c5d0;
+  --color-info:           #60b0d0;
+  --color-info-bg:        rgba(96, 176, 208, 0.1);
+  --color-info-border:    rgba(96, 176, 208, 0.25);
 
   /* Radii */
   --radius-sm: 6px;
@@ -47,9 +49,9 @@
   --radius-lg: 10px;
   --radius-xl: 12px;
 
-  --shadow-sm: 0 1px 3px 0 rgba(44, 58, 42, 0.07);
-  --shadow-md: 0 2px 6px -1px rgba(44, 58, 42, 0.09);
-  --shadow-lg: 0 8px 20px -4px rgba(44, 58, 42, 0.12);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 2px 8px -1px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
 
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -85,12 +87,8 @@ button, input, select, textarea {
 /* Placeholder styling — light shade so users know what to type */
 input::placeholder,
 textarea::placeholder {
-  color: var(--sage-400);
-  opacity: 1;
+  color: var(--text-muted);
+  opacity: 0.6;
   font-weight: 400;
   font-style: italic;
-}
-
-select option[value=""][disabled] {
-  color: var(--sage-400);
 }

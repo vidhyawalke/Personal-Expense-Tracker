@@ -18,7 +18,7 @@ const DEFAULT_BUDGET = {
   monthly_income: 0,
   monthly_budget: 0,
   categories_budget: {},
-  savings_target: { goal: 20000, target_box_amount: 200, saved_boxes: [] },
+  savings_target: { goal: 0, target_box_amount: 0, saved_boxes: [] },
   checklist: [
     { id: 1, text: 'Check yesterday\'s spending', checked: false },
     { id: 2, text: 'Log all today\'s expenses', checked: false },
@@ -53,6 +53,8 @@ export default function App() {
   const [showSetup, setShowSetup] = useState(() => !localStorage.getItem(STORAGE_KEYS.setupDone));
   const [setupIncome, setSetupIncome] = useState('');
   const [setupBudget, setSetupBudget] = useState('');
+  const [setupGoal, setSetupGoal] = useState('');
+  const [setupStep, setSetupStep] = useState('');
 
   const evaluateBudgetWarning = useCallback((expensesList, currentBudget) => {
     const total = expensesList.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
@@ -93,9 +95,16 @@ export default function App() {
   const handleUpdateBudget = (patch) => {
     const merged = { ...budgetData, ...patch };
     // Handle nested savings target
+    if (patch.savings_target !== undefined) {
+      merged.savings_target = {
+        ...budgetData.savings_target,
+        ...patch.savings_target
+      };
+    }
     if (patch.saved_boxes !== undefined) {
       merged.savings_target = {
         ...budgetData.savings_target,
+        ...(patch.savings_target || {}),
         saved_boxes: patch.saved_boxes
       };
       delete merged.saved_boxes;
@@ -137,11 +146,24 @@ export default function App() {
     e.preventDefault();
     const inc = parseFloat(setupIncome);
     const bud = parseFloat(setupBudget);
+    const goalAmt = parseFloat(setupGoal);
+    const stepAmt = parseFloat(setupStep);
+
     if (isNaN(inc) || inc <= 0 || isNaN(bud) || bud <= 0) {
-      alert('Please enter valid numbers for both fields.');
+      alert('Please fill in your income and spending limit.');
       return;
     }
-    const newBudget = { ...DEFAULT_BUDGET, monthly_income: inc, monthly_budget: bud };
+
+    const newBudget = {
+      ...DEFAULT_BUDGET,
+      monthly_income: inc,
+      monthly_budget: bud,
+      savings_target: {
+        goal: (!isNaN(goalAmt) && goalAmt > 0) ? goalAmt : 0,
+        target_box_amount: (!isNaN(stepAmt) && stepAmt > 0) ? stepAmt : 0,
+        saved_boxes: []
+      }
+    };
     setBudgetData(newBudget);
     saveToStorage(STORAGE_KEYS.budget, newBudget);
     saveToStorage(STORAGE_KEYS.setupDone, 'true');
@@ -149,9 +171,9 @@ export default function App() {
   };
 
   const handleSkipSetup = () => {
-    const newBudget = { ...DEFAULT_BUDGET, monthly_income: 3000, monthly_budget: 2000 };
-    setBudgetData(newBudget);
-    saveToStorage(STORAGE_KEYS.budget, newBudget);
+    // Skip with all zeros — user sets everything later
+    setBudgetData(DEFAULT_BUDGET);
+    saveToStorage(STORAGE_KEYS.budget, DEFAULT_BUDGET);
     saveToStorage(STORAGE_KEYS.setupDone, 'true');
     setShowSetup(false);
   };
@@ -163,10 +185,10 @@ export default function App() {
         <div className="setup-overlay">
           <div className="setup-card">
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
-              <img src={harmonyLogo} alt="Harmony" style={{ height: '40px', borderRadius: '6px' }} />
+              <img src={harmonyLogo} alt="Harmony" style={{ height: '36px', borderRadius: '6px' }} />
               <h2 style={{ margin: 0 }}>Welcome to Harmony!</h2>
             </div>
-            <p>Let's set up your budget. You can always change these later.</p>
+            <p>Set up your budget to get started. You can change all of this later in the Budget tab.</p>
 
             <form onSubmit={handleSetupSubmit}>
               <div className="form-group">
@@ -174,7 +196,7 @@ export default function App() {
                 <input
                   type="number"
                   step="0.01"
-                  placeholder="e.g. 3500.00"
+                  placeholder="e.g. 3500"
                   className="form-input"
                   value={setupIncome}
                   onChange={(e) => setSetupIncome(e.target.value)}
@@ -184,11 +206,11 @@ export default function App() {
               </div>
 
               <div className="form-group">
-                <label className="form-label">How much do you want to spend per month?</label>
+                <label className="form-label">How much can you spend per month?</label>
                 <input
                   type="number"
                   step="0.01"
-                  placeholder="e.g. 2000.00"
+                  placeholder="e.g. 2000"
                   className="form-input"
                   value={setupBudget}
                   onChange={(e) => setSetupBudget(e.target.value)}
@@ -196,7 +218,32 @@ export default function App() {
                 />
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '24px', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                <div className="form-group">
+                  <label className="form-label">Savings goal (optional)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g. 10000"
+                    className="form-input"
+                    value={setupGoal}
+                    onChange={(e) => setSetupGoal(e.target.value)}
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Save per step (optional)</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    placeholder="e.g. 100"
+                    className="form-input"
+                    value={setupStep}
+                    onChange={(e) => setSetupStep(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', gap: '12px' }}>
                 <button type="button" className="btn-secondary" onClick={handleSkipSetup}>
                   Skip for now
                 </button>
@@ -217,7 +264,7 @@ export default function App() {
             className="brand-logo-img"
           />
           <div>
-            <h1 className="brand-title">Harmony Expense Tracker</h1>
+            <h1 className="brand-title">Harmony</h1>
             <p className="brand-subtitle">Keep your money on track</p>
           </div>
         </div>
