@@ -64,11 +64,11 @@ export default function ExpenseList({
     const numAmount = parseFloat(amount);
 
     if (!cleanDesc) {
-      alert("Please enter a valid description.");
+      alert("Please type what you spent on.");
       return;
     }
     if (isNaN(numAmount) || numAmount <= 0) {
-      alert("Please enter a valid amount greater than 0.");
+      alert("Please enter how much you spent.");
       return;
     }
 
@@ -87,11 +87,11 @@ export default function ExpenseList({
     const numAmount = parseFloat(amount);
 
     if (!cleanDesc) {
-      alert("Please enter a valid description.");
+      alert("Please type what you spent on.");
       return;
     }
     if (isNaN(numAmount) || numAmount <= 0) {
-      alert("Please enter a valid amount greater than 0.");
+      alert("Please enter how much you spent.");
       return;
     }
 
@@ -122,7 +122,7 @@ export default function ExpenseList({
             <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="text"
-              placeholder="Search expenses by keyword or category..."
+              placeholder="e.g. groceries, rent, uber..."
               className="form-input"
               style={{ paddingLeft: '40px' }}
               value={searchTerm}
@@ -146,11 +146,11 @@ export default function ExpenseList({
 
         <div style={{ display: 'flex', gap: '10px' }}>
           <button className="btn-primary" onClick={handleOpenAddModal}>
-            <Plus size={18} /> Add Transaction
+            <Plus size={18} /> Add Expense
           </button>
 
           <button className="btn-secondary" onClick={onExportCSV}>
-            <Download size={18} /> Export CSV
+            <Download size={18} /> Download CSV
           </button>
         </div>
       </div>
@@ -158,25 +158,24 @@ export default function ExpenseList({
       <div className="harmony-card">
         <div className="card-header">
           <div>
-            <div className="card-title">Expense Transactions</div>
+            <div className="card-title">Your Expenses</div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Showing {filteredExpenses.length} record(s) | Total: ${totalFiltered.toFixed(2)}
+              Showing {filteredExpenses.length} item(s) — Total: ${totalFiltered.toFixed(2)}
             </div>
           </div>
         </div>
 
         {filteredExpenses.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--text-muted)' }}>
-            <p style={{ fontSize: '1rem', fontWeight: '500' }}>No matching expense records found.</p>
+            <p style={{ fontSize: '1rem', fontWeight: '500' }}>No expenses found. Try adding one above!</p>
           </div>
         ) : (
           <div className="table-container">
             <table className="data-table">
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Date</th>
-                  <th>Description</th>
+                  <th>What</th>
                   <th>Category</th>
                   <th style={{ textAlign: 'right' }}>Amount</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
@@ -185,9 +184,6 @@ export default function ExpenseList({
               <tbody>
                 {filteredExpenses.map((exp) => (
                   <tr key={exp.id}>
-                    <td style={{ fontWeight: '600', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-                      #{exp.id}
-                    </td>
                     <td style={{ fontWeight: '500', color: 'var(--text-secondary)' }}>
                       {exp.date}
                     </td>
@@ -206,14 +202,14 @@ export default function ExpenseList({
                       <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
                         <button
                           className="btn-icon"
-                          title="Edit transaction"
+                          title="Edit"
                           onClick={() => handleOpenEditModal(exp)}
                         >
                           <Edit3 size={15} />
                         </button>
                         <button
                           className="btn-icon danger"
-                          title="Delete transaction"
+                          title="Delete"
                           onClick={() => setDeleteConfirmId(exp.id)}
                         >
                           <Trash2 size={15} />
@@ -233,7 +229,7 @@ export default function ExpenseList({
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--forest-900)' }}>
-                Add New Transaction
+                Add Expense
               </h3>
               <button
                 className="btn-icon"
@@ -245,10 +241,10 @@ export default function ExpenseList({
 
             <form onSubmit={handleSubmitAdd}>
               <div className="form-group">
-                <label className="form-label">Description</label>
+                <label className="form-label">What did you spend on?</label>
                 <input
                   type="text"
-                  placeholder="e.g. Monthly Grocery Restock"
+                  placeholder="e.g. Weekly groceries"
                   className="form-input"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -259,11 +255,11 @@ export default function ExpenseList({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div className="form-group">
-                  <label className="form-label">Amount ($)</label>
+                  <label className="form-label">How much? ($)</label>
                   <input
                     type="number"
                     step="0.01"
-                    placeholder="0.00"
+                    placeholder="e.g. 45.50"
                     className="form-input"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
@@ -272,7 +268,7 @@ export default function ExpenseList({
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Date</label>
+                  <label className="form-label">When?</label>
                   <input
                     type="date"
                     className="form-input"
@@ -308,7 +304,7 @@ export default function ExpenseList({
                   type="submit"
                   className="btn-primary"
                 >
-                  Save Transaction
+                  Save
                 </button>
               </div>
             </form>
@@ -321,7 +317,7 @@ export default function ExpenseList({
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
               <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--forest-900)' }}>
-                Edit Transaction #{editingExpense.id}
+                Edit Expense
               </h3>
               <button
                 className="btn-icon"
@@ -333,9 +329,10 @@ export default function ExpenseList({
 
             <form onSubmit={handleSubmitEdit}>
               <div className="form-group">
-                <label className="form-label">Description</label>
+                <label className="form-label">What did you spend on?</label>
                 <input
                   type="text"
+                  placeholder="e.g. Monthly rent"
                   className="form-input"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -345,10 +342,11 @@ export default function ExpenseList({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div className="form-group">
-                  <label className="form-label">Amount ($)</label>
+                  <label className="form-label">How much? ($)</label>
                   <input
                     type="number"
                     step="0.01"
+                    placeholder="e.g. 120.00"
                     className="form-input"
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
@@ -357,7 +355,7 @@ export default function ExpenseList({
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">Date</label>
+                  <label className="form-label">When?</label>
                   <input
                     type="date"
                     className="form-input"
@@ -393,7 +391,7 @@ export default function ExpenseList({
                   type="submit"
                   className="btn-primary"
                 >
-                  Update Transaction
+                  Update
                 </button>
               </div>
             </form>
@@ -410,10 +408,10 @@ export default function ExpenseList({
               </div>
               <div>
                 <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--forest-900)' }}>
-                  Confirm Deletion
+                  Delete this expense?
                 </h3>
                 <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                  Are you sure you want to delete transaction #{deleteConfirmId}? This action cannot be undone.
+                  This can't be undone.
                 </p>
               </div>
             </div>
@@ -430,7 +428,7 @@ export default function ExpenseList({
                 style={{ background: 'var(--color-danger)' }}
                 onClick={confirmDelete}
               >
-                Delete Record
+                Delete
               </button>
             </div>
           </div>

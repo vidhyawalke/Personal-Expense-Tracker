@@ -1,31 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
 :root {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Growth Color System — calm, AI-minimal */
-  --forest-900: #1a2e1e;
-  --forest-800: #2d4a32;
-  --forest-700: #3d6142;
-  --sage-600:   #4e7a54;
-  --sage-500:   #6b9e72;
-  --sage-400:   #8dba94;
-  --sage-200:   #bdd8c0;
-  --sage-100:   #deeee0;
-  --sage-50:    #f1f8f2;
+  /* Olive Green Color System */
+  --forest-900: #2c3a2a;
+  --forest-800: #4a5d3e;
+  --forest-700: #5e7550;
+  --sage-600:   #6e8a5a;
+  --sage-500:   #8ba470;
+  --sage-400:   #a3bb8c;
+  --sage-200:   #c8d8b4;
+  --sage-100:   #e2ecd6;
+  --sage-50:    #f2f6ec;
 
-  --bg-app:     #f5f7f5;
+  --bg-app:     #f4f6f0;
   --bg-card:    #ffffff;
-  --bg-surface: #edf2ee;
-  --border-subtle: #dce6dd;
-  --border-card:   #e0eae1;
+  --bg-surface: #eaefe3;
+  --border-subtle: #d5ddc9;
+  --border-card:   #dde5d2;
 
-  --text-main:      #1a2e1e;
-  --text-secondary: #3a5240;
-  --text-muted:     #6b8570;
+  --text-main:      #2c3a2a;
+  --text-secondary: #4a5d3e;
+  --text-muted:     #7a8d6e;
 
-  --color-success:        #2e7d32;
-  --color-success-bg:     #f0f7f0;
-  --color-success-border: #a5d6a7;
+  --color-success:        #4a7c3f;
+  --color-success-bg:     #eef5eb;
+  --color-success-border: #a3cc96;
 
   --color-warning:        #8c6d1f;
   --color-warning-bg:     #fdf8ec;
@@ -35,19 +37,19 @@
   --color-danger-bg:      #fdf3f2;
   --color-danger-border:  #f1b0aa;
 
-  --color-info:           #1565c0;
-  --color-info-bg:        #f0f4fc;
-  --color-info-border:    #90b8e8;
+  --color-info:           #3d7a8a;
+  --color-info-bg:        #eef6f8;
+  --color-info-border:    #90c5d0;
 
-  /* Flat, square-ish radii */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 10px;
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
 
-  --shadow-sm: 0 1px 3px 0 rgba(26, 46, 30, 0.06);
-  --shadow-md: 0 2px 6px -1px rgba(26, 46, 30, 0.07);
-  --shadow-lg: 0 8px 20px -4px rgba(26, 46, 30, 0.10);
+  --shadow-sm: 0 1px 3px 0 rgba(44, 58, 42, 0.07);
+  --shadow-md: 0 2px 6px -1px rgba(44, 58, 42, 0.09);
+  --shadow-lg: 0 8px 20px -4px rgba(44, 58, 42, 0.12);
 
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -78,4 +80,17 @@ body {
 
 button, input, select, textarea {
   font-family: inherit;
+}
+
+/* Placeholder styling — light shade so users know what to type */
+input::placeholder,
+textarea::placeholder {
+  color: var(--sage-400);
+  opacity: 1;
+  font-weight: 400;
+  font-style: italic;
+}
+
+select option[value=""][disabled] {
+  color: var(--sage-400);
 }

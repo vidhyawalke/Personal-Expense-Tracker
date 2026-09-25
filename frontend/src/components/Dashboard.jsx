@@ -3,8 +3,8 @@ import { Wallet, TrendingUp, ShieldCheck, PieChart, CheckCircle2, AlertCircle, D
 
 export default function Dashboard({ expenses, budgetData, onToggleChecklist, warning }) {
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
-  const income = Number(budgetData?.monthly_income) || 3500;
-  const budget = Number(budgetData?.monthly_budget) || 2400;
+  const income = Number(budgetData?.monthly_income) || 0;
+  const budget = Number(budgetData?.monthly_budget) || 0;
   const remaining = budget - totalSpent;
   const netSavings = Math.max(0, income - totalSpent);
   const savingsRate = income > 0 ? ((netSavings / income) * 100).toFixed(1) : '0.0';
@@ -46,7 +46,7 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
             <Activity size={24} />
           </div>
           <div>
-            <div className="stat-label">Total Expenditures</div>
+            <div className="stat-label">Total Spent</div>
             <div className="stat-value">${totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
           </div>
         </div>
@@ -56,7 +56,7 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
             <ShieldCheck size={24} />
           </div>
           <div>
-            <div className="stat-label">Budget Balance</div>
+            <div className="stat-label">Budget Left</div>
             <div className="stat-value" style={{ color: remaining >= 0 ? 'var(--forest-800)' : 'var(--color-danger)' }}>
               ${remaining.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
@@ -78,10 +78,10 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
           <div>
             <div style={{ fontWeight: '700', fontSize: '1rem', color: 'var(--forest-900)' }}>
-              Monthly Budget Utilization
+              Budget Used
             </div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-              ${totalSpent.toFixed(2)} spent of ${budget.toFixed(2)} monthly allocation
+              ${totalSpent.toFixed(2)} spent of ${budget.toFixed(2)} monthly limit
             </div>
           </div>
           <span style={{
@@ -92,7 +92,7 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
             background: budgetUsedPercent > 90 ? 'var(--color-danger-bg)' : budgetUsedPercent > 75 ? 'var(--color-warning-bg)' : 'var(--sage-100)',
             color: budgetUsedPercent > 90 ? 'var(--color-danger)' : budgetUsedPercent > 75 ? 'var(--color-warning)' : 'var(--forest-800)'
           }}>
-            {budgetUsedPercent}% Allocated
+            {budgetUsedPercent}% used
           </span>
         </div>
 
@@ -109,7 +109,7 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
           <div className="card-header">
             <div className="card-title">
               <CheckCircle2 size={20} color="var(--forest-800)" />
-              <span>Daily Financial Discipline</span>
+              <span>Daily Checklist</span>
             </div>
           </div>
 
@@ -133,13 +133,13 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
           <div className="card-header">
             <div className="card-title">
               <PieChart size={20} color="var(--forest-800)" />
-              <span>Primary Allocation Distribution</span>
+              <span>Top Spending Categories</span>
             </div>
           </div>
 
           {sortedCategories.length === 0 ? (
             <div style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)' }}>
-              No category expenditures recorded yet.
+              No expenses yet. Add some in the Expenses tab.
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -166,13 +166,13 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
         <div className="card-header">
           <div className="card-title">
             <Wallet size={20} color="var(--forest-800)" />
-            <span>Recent Transactions</span>
+            <span>Recent Expenses</span>
           </div>
         </div>
 
         {expenses.length === 0 ? (
           <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-            No expense records found. Use the Expense Tracker tab to add transactions.
+            No expenses yet. Go to the Expenses tab to add your first one.
           </div>
         ) : (
           <div className="table-container">
@@ -180,7 +180,7 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
               <thead>
                 <tr>
                   <th>Date</th>
-                  <th>Description</th>
+                  <th>What</th>
                   <th>Category</th>
                   <th style={{ textAlign: 'right' }}>Amount</th>
                 </tr>

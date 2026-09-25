@@ -1,5 +1,5 @@
 /* =========================================================
-   HARMONY EXPENSE TRACKER - GROWTH & HARMONY THEME
+   HARMONY EXPENSE TRACKER - OLIVE GREEN THEME
    ========================================================= */
 
 /* App Container Layout */
@@ -80,7 +80,7 @@
   height: 8px;
   border-radius: 50%;
   background-color: var(--sage-500);
-  box-shadow: 0 0 0 3px rgba(82, 183, 136, 0.25);
+  box-shadow: 0 0 0 3px rgba(139, 164, 112, 0.25);
   animation: pulse-dot 2s infinite ease-in-out;
 }
 
@@ -133,7 +133,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  transition: background 0.12s ease, color 0.12s ease;
+  transition: background 0.15s ease, color 0.15s ease;
 }
 
 .nav-tab-btn:hover {
@@ -146,6 +146,22 @@
   color: #ffffff;
 }
 
+/* Smooth tab content transitions */
+.tab-content {
+  animation: fadeSlideIn 0.2s ease-out;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Cards & Layout Containers */
 .harmony-card {
   background: var(--bg-card);
@@ -153,6 +169,7 @@
   border-radius: var(--radius-lg);
   padding: 20px;
   box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease;
 }
 
 .harmony-card:hover {
@@ -299,7 +316,7 @@
 .badge-category {
   display: inline-block;
   padding: 3px 8px;
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 0.78rem;
   font-weight: 500;
   background: var(--sage-100);
@@ -320,7 +337,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: background 0.12s ease;
+  transition: background 0.15s ease;
 }
 
 .btn-primary:hover {
@@ -340,7 +357,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  transition: background 0.12s ease;
+  transition: background 0.15s ease;
 }
 
 .btn-secondary:hover {
@@ -358,7 +375,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.12s ease;
+  transition: background 0.15s ease;
 }
 
 .btn-icon:hover {
@@ -395,15 +412,15 @@
   color: var(--text-main);
   font-size: 0.88rem;
   outline: none;
-  transition: border-color 0.12s ease;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .form-input:focus {
   border-color: var(--sage-500);
-  box-shadow: 0 0 0 2px rgba(107, 158, 114, 0.18);
+  box-shadow: 0 0 0 2px rgba(139, 164, 112, 0.2);
 }
 
-/* Daily Discipline Checklist */
+/* Daily Checklist */
 .checklist-container {
   display: flex;
   flex-direction: column;
@@ -462,12 +479,18 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(26, 46, 30, 0.4);
+  background: rgba(44, 58, 42, 0.45);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 20px;
+  animation: backdropIn 0.15s ease-out;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .modal-card {
@@ -478,6 +501,12 @@
   max-width: 460px;
   padding: 24px;
   box-shadow: var(--shadow-lg);
+  animation: modalSlideIn 0.2s ease-out;
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .modal-actions {
@@ -487,7 +516,7 @@
   margin-top: 24px;
 }
 
-/* 50/30/20 Allocation Rule Grid */
+/* 50/30/20 Rule Grid */
 .rule-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -538,7 +567,7 @@
   color: var(--forest-900);
 }
 
-/* Savings Matrix (100 Steps Growth Tracker) */
+/* Savings Grid (100 Steps) */
 .savings-matrix-container {
   background: var(--bg-card);
   border: 1px solid var(--border-card);
@@ -555,7 +584,7 @@
 
 .matrix-box {
   aspect-ratio: 1;
-  border-radius: 2px;
+  border-radius: 3px;
   border: 1px solid var(--border-subtle);
   background: var(--bg-surface);
   display: flex;
@@ -565,7 +594,7 @@
   font-weight: 500;
   color: var(--text-muted);
   cursor: pointer;
-  transition: background 0.12s ease;
+  transition: background 0.12s ease, border-color 0.12s ease;
 }
 
 .matrix-box:hover {
@@ -601,6 +630,44 @@
 .progress-bar-fill.success { background: var(--color-success); }
 .progress-bar-fill.warning { background: var(--color-warning); }
 .progress-bar-fill.danger { background: var(--color-danger); }
+
+/* Setup Wizard */
+.setup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 58, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  animation: backdropIn 0.2s ease-out;
+}
+
+.setup-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-card);
+  width: 100%;
+  max-width: 480px;
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+  animation: modalSlideIn 0.25s ease-out;
+}
+
+.setup-card h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--forest-900);
+  margin-bottom: 6px;
+}
+
+.setup-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
