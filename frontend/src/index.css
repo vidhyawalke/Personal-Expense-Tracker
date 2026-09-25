@@ -1,57 +1,60 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Dark Olive Green Palette — #254222 / #99cc66 / #ece2b1 / #cae4c5 */
-  --forest-900: #1a2e19;
-  --forest-800: #254222;
-  --forest-700: #305530;
-  --sage-600:   #4a7a42;
-  --sage-500:   #6da860;
-  --sage-400:   #99cc66;
-  --sage-200:   #cae4c5;
-  --sage-100:   #dbefd8;
-  --sage-50:    #edf7eb;
+  /* Natural, Breathable Oxygen Palette — Clean Alpine Pine & Fresh Mint Teal */
+  --bg-app:        #080f14; /* Deep midnight alpine atmosphere */
+  --bg-card:       #0e1a22; /* Clean dark teal-slate card surface */
+  --bg-surface:    #152530; /* Elevated surface */
+  --bg-surface-hover: #1c3241;
+  --bg-glass:      rgba(14, 26, 34, 0.85);
 
-  /* Dark background scheme */
-  --bg-app:     #1a2e19;
-  --bg-card:    #223a20;
-  --bg-surface: #2a4828;
-  --border-subtle: #3a5a36;
-  --border-card:   #3d6038;
+  --border-subtle: #1e3442;
+  --border-card:   rgba(52, 211, 153, 0.16);
+  --border-focus:  #10b981;
 
-  /* Light text on dark */
-  --text-main:      #ece2b1;
-  --text-secondary: #cae4c5;
-  --text-muted:     #8aab82;
+  /* Fresh Oxygen & Mint Accents */
+  --mint-primary:  #10b981; /* Emerald / Vitality */
+  --mint-light:    #34d399; /* Fresh spring mint */
+  --mint-glow:     rgba(52, 211, 153, 0.25);
+  --teal-oxygen:   #06b6d4; /* Crisp alpine sky */
+  --teal-deep:     #0f766e;
 
-  --color-success:        #99cc66;
-  --color-success-bg:     rgba(153, 204, 102, 0.12);
-  --color-success-border: rgba(153, 204, 102, 0.3);
+  /* Text — High Contrast, Clean Breathable Whites & Silvers */
+  --text-main:      #f8fafc; /* Crisp white */
+  --text-secondary: #cbd5e1; /* Soft silver slate */
+  --text-muted:     #7e9ba9; /* Breathable slate-cyan muted */
 
-  --color-warning:        #e8c44a;
-  --color-warning-bg:     rgba(232, 196, 74, 0.1);
-  --color-warning-border: rgba(232, 196, 74, 0.25);
+  /* Status Colors */
+  --color-success:        #10b981;
+  --color-success-bg:     rgba(16, 185, 129, 0.12);
+  --color-success-border: rgba(16, 185, 129, 0.3);
 
-  --color-danger:         #e06050;
-  --color-danger-bg:      rgba(224, 96, 80, 0.1);
-  --color-danger-border:  rgba(224, 96, 80, 0.25);
+  --color-warning:        #f59e0b;
+  --color-warning-bg:     rgba(245, 158, 11, 0.12);
+  --color-warning-border: rgba(245, 158, 11, 0.28);
 
-  --color-info:           #60b0d0;
-  --color-info-bg:        rgba(96, 176, 208, 0.1);
-  --color-info-border:    rgba(96, 176, 208, 0.25);
+  --color-danger:         #f43f5e;
+  --color-danger-bg:      rgba(244, 63, 94, 0.12);
+  --color-danger-border:  rgba(244, 63, 94, 0.28);
+
+  --color-info:           #06b6d4;
+  --color-info-bg:        rgba(6, 182, 212, 0.12);
+  --color-info-border:    rgba(6, 182, 212, 0.28);
 
   /* Radii */
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 10px;
-  --radius-xl: 12px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
 
-  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 2px 8px -1px rgba(0, 0, 0, 0.25);
-  --shadow-lg: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
+  /* Shadows */
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.45);
+  --shadow-glow: 0 0 20px rgba(16, 185, 129, 0.18);
 
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -70,6 +73,10 @@
 body {
   min-height: 100vh;
   background-color: var(--bg-app);
+  background-image: 
+    radial-gradient(circle at 15% 10%, rgba(6, 182, 212, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(16, 185, 129, 0.07) 0%, transparent 50%);
+  background-attachment: fixed;
   color: var(--text-main);
   font-family: var(--font-sans);
 }
@@ -84,11 +91,11 @@ button, input, select, textarea {
   font-family: inherit;
 }
 
-/* Placeholder styling — light shade so users know what to type */
+/* Light, clear placeholders so users effortlessly see examples */
 input::placeholder,
 textarea::placeholder {
   color: var(--text-muted);
-  opacity: 0.6;
+  opacity: 0.55;
   font-weight: 400;
   font-style: italic;
 }

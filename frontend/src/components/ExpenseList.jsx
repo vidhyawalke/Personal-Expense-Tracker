@@ -18,7 +18,8 @@ export default function ExpenseList({
   onAddExpense,
   onUpdateExpense,
   onDeleteExpense,
-  onExportCSV
+  onExportCSV,
+  currency = '₹'
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -160,7 +161,7 @@ export default function ExpenseList({
           <div>
             <div className="card-title">Your Expenses</div>
             <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Showing {filteredExpenses.length} item(s) — Total: ${totalFiltered.toFixed(2)}
+              Showing {filteredExpenses.length} item(s) — Total: {currency}{totalFiltered.toFixed(2)}
             </div>
           </div>
         </div>
@@ -170,7 +171,7 @@ export default function ExpenseList({
             <p style={{ fontSize: '1rem', fontWeight: '500' }}>No expenses found. Try adding one above!</p>
           </div>
         ) : (
-          <div className="table-container">
+          <div className="data-table-wrapper">
             <table className="data-table">
               <thead>
                 <tr>
@@ -195,8 +196,8 @@ export default function ExpenseList({
                         {exp.category || 'Other'}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'right', fontWeight: '700', color: 'var(--forest-900)' }}>
-                      ${Number(exp.amount).toFixed(2)}
+                    <td style={{ textAlign: 'right', fontWeight: '700', color: 'var(--mint-light)' }}>
+                      {currency}{Number(exp.amount).toFixed(2)}
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
@@ -228,7 +229,7 @@ export default function ExpenseList({
         <div className="modal-backdrop" onClick={() => setIsAddModalOpen(false)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--forest-900)' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-main)' }}>
                 Add Expense
               </h3>
               <button
@@ -255,7 +256,7 @@ export default function ExpenseList({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div className="form-group">
-                  <label className="form-label">How much? ($)</label>
+                  <label className="form-label">How much? ({currency})</label>
                   <input
                     type="number"
                     step="0.01"
@@ -316,7 +317,7 @@ export default function ExpenseList({
         <div className="modal-backdrop" onClick={() => setEditingExpense(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--forest-900)' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-main)' }}>
                 Edit Expense
               </h3>
               <button
@@ -342,7 +343,7 @@ export default function ExpenseList({
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div className="form-group">
-                  <label className="form-label">How much? ($)</label>
+                  <label className="form-label">How much? ({currency})</label>
                   <input
                     type="number"
                     step="0.01"

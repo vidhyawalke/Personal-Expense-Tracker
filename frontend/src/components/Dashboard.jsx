@@ -1,7 +1,7 @@
 import React from 'react';
-import { Wallet, TrendingUp, ShieldCheck, PieChart, CheckCircle2, AlertCircle, DollarSign, Activity } from 'lucide-react';
+import { Wallet, TrendingUp, ShieldCheck, PieChart, CheckCircle2, AlertCircle, Coins, Activity } from 'lucide-react';
 
-export default function Dashboard({ expenses, budgetData, onToggleChecklist, warning }) {
+export default function Dashboard({ expenses, budgetData, onToggleChecklist, warning, currency = '₹' }) {
   const totalSpent = expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
   const income = Number(budgetData?.monthly_income) || 0;
   const budget = Number(budgetData?.monthly_budget) || 0;
@@ -22,7 +22,7 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
     .slice(0, 4);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       
       {warning && (
         <div className={`alert-banner ${totalSpent > budget ? 'danger' : 'warning'}`}>
@@ -32,53 +32,55 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
       )}
 
       {!hasSetup && (
-        <div className="alert-banner success">
-          <DollarSign size={18} />
-          <span>Go to the Budget tab to set your income and spending limit.</span>
+        <div className="alert-banner info">
+          <Coins size={18} />
+          <span>Go to the Budget tab to configure your income, spending limit, and savings goals.</span>
         </div>
       )}
 
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon-wrapper stat-icon-income">
-            <DollarSign size={20} />
+            <Coins size={22} />
           </div>
           <div>
-            <div className="stat-label">Income</div>
+            <div className="stat-label">Monthly Income</div>
             <div className="stat-value">
-              {income > 0 ? `$${income.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+              {income > 0 ? `${currency}${income.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
             </div>
           </div>
         </div>
 
         <div className="stat-card">
           <div className="stat-icon-wrapper stat-icon-spent">
-            <Activity size={20} />
+            <Activity size={22} />
           </div>
           <div>
-            <div className="stat-label">Spent</div>
-            <div className="stat-value">${totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+            <div className="stat-label">Total Spent</div>
+            <div className="stat-value">
+              {currency}{totalSpent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </div>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper stat-icon-balance">
-            <ShieldCheck size={20} />
+          <div className="stat-icon-wrapper stat-icon-remaining">
+            <ShieldCheck size={22} />
           </div>
           <div>
-            <div className="stat-label">Left</div>
+            <div className="stat-label">Budget Left</div>
             <div className="stat-value" style={{ color: budget > 0 ? (remaining >= 0 ? 'var(--color-success)' : 'var(--color-danger)') : 'var(--text-main)' }}>
-              {budget > 0 ? `$${remaining.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
+              {budget > 0 ? `${currency}${remaining.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : '—'}
             </div>
           </div>
         </div>
 
         <div className="stat-card">
           <div className="stat-icon-wrapper stat-icon-savings">
-            <TrendingUp size={20} />
+            <TrendingUp size={22} />
           </div>
           <div>
-            <div className="stat-label">Saving</div>
+            <div className="stat-label">Savings Rate</div>
             <div className="stat-value">{savingsRate}{income > 0 ? '%' : ''}</div>
           </div>
         </div>
@@ -88,11 +90,11 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
         <div className="harmony-card">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', flexWrap: 'wrap', gap: '8px' }}>
             <div>
-              <div style={{ fontWeight: '700', fontSize: '0.95rem', color: 'var(--text-main)' }}>
-                Budget Used
+              <div style={{ fontWeight: '700', fontSize: '0.98rem', color: 'var(--text-main)' }}>
+                Budget Spending Pace
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                ${totalSpent.toFixed(2)} of ${budget.toFixed(2)}
+              <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                {currency}{totalSpent.toFixed(2)} of {currency}{budget.toFixed(2)} monthly allowance
               </div>
             </div>
             <span style={{
@@ -120,7 +122,7 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
         <div className="harmony-card">
           <div className="card-header">
             <div className="card-title">
-              <CheckCircle2 size={18} color="var(--sage-400)" />
+              <CheckCircle2 size={20} color="var(--mint-light)" />
               <span>Daily Checklist</span>
             </div>
           </div>
@@ -144,15 +146,15 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
         <div className="harmony-card">
           <div className="card-header">
             <div className="card-title">
-              <PieChart size={18} color="var(--sage-400)" />
-              <span>Top Categories</span>
+              <PieChart size={20} color="var(--mint-light)" />
+              <span>Top Spending Categories</span>
             </div>
           </div>
 
           {sortedCategories.length === 0 ? (
             <div className="empty-state">
-              <p>No expenses yet.</p>
-              <div className="hint">Add some in the Expenses tab</div>
+              <p>No expenses logged yet.</p>
+              <div className="hint">Add expenses to view category breakdown</div>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -162,7 +164,7 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
                   <div key={cat}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', fontWeight: '600', marginBottom: '5px' }}>
                       <span style={{ color: 'var(--text-main)' }}>{cat}</span>
-                      <span style={{ color: 'var(--text-muted)' }}>${amt.toFixed(2)} ({pct}%)</span>
+                      <span style={{ color: 'var(--text-muted)' }}>{currency}{amt.toFixed(2)} ({pct}%)</span>
                     </div>
                     <div className="progress-bar-bg" style={{ height: '7px', marginTop: 0 }}>
                       <div className="progress-bar-fill" style={{ width: `${pct}%` }} />
@@ -178,7 +180,7 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
       <div className="harmony-card">
         <div className="card-header">
           <div className="card-title">
-            <Wallet size={18} color="var(--sage-400)" />
+            <Wallet size={20} color="var(--mint-light)" />
             <span>Recent Expenses</span>
           </div>
         </div>
@@ -186,15 +188,15 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
         {expenses.length === 0 ? (
           <div className="empty-state">
             <p>No expenses yet.</p>
-            <div className="hint">Go to Expenses tab to add your first one</div>
+            <div className="hint">Go to the Expenses tab to log your spending</div>
           </div>
         ) : (
-          <div className="table-container">
+          <div className="data-table-wrapper">
             <table className="data-table">
               <thead>
                 <tr>
                   <th>Date</th>
-                  <th>What</th>
+                  <th>Description</th>
                   <th>Category</th>
                   <th style={{ textAlign: 'right' }}>Amount</th>
                 </tr>
@@ -205,10 +207,19 @@ export default function Dashboard({ expenses, budgetData, onToggleChecklist, war
                     <td style={{ color: 'var(--text-muted)', fontWeight: '500' }}>{exp.date}</td>
                     <td style={{ fontWeight: '600', color: 'var(--text-main)' }}>{exp.description}</td>
                     <td>
-                      <span className="badge-category">{exp.category || 'Other'}</span>
+                      <span style={{
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '6px',
+                        padding: '3px 8px',
+                        fontSize: '0.78rem',
+                        color: 'var(--text-secondary)'
+                      }}>
+                        {exp.category || 'Other'}
+                      </span>
                     </td>
-                    <td style={{ textAlign: 'right', fontWeight: '700', color: 'var(--sage-400)' }}>
-                      ${Number(exp.amount).toFixed(2)}
+                    <td style={{ textAlign: 'right', fontWeight: '700', color: 'var(--mint-light)' }}>
+                      {currency}{Number(exp.amount).toFixed(2)}
                     </td>
                   </tr>
                 ))}
