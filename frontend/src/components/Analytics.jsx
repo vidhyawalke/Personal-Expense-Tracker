@@ -37,26 +37,26 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
   const displayScore = Math.max(10, Math.round(healthScore));
 
   const getScoreBadge = (score) => {
-    if (score >= 85) return { label: 'Optimal', color: 'var(--color-success)', bg: 'var(--color-success-bg)' };
-    if (score >= 70) return { label: 'Healthy', color: 'var(--mint-light)', bg: 'rgba(52, 211, 153, 0.12)' };
-    if (score >= 50) return { label: 'Attention', color: 'var(--color-warning)', bg: 'var(--color-warning-bg)' };
+    if (score >= 85) return { label: 'Optimal', color: 'var(--growth-green)', bg: 'var(--growth-green-light)' };
+    if (score >= 70) return { label: 'Healthy', color: 'var(--growth-green-hover)', bg: 'var(--growth-green-light)' };
+    if (score >= 50) return { label: 'Attention', color: 'var(--terracotta)', bg: 'var(--terracotta-light)' };
     return { label: 'Critical', color: 'var(--color-danger)', bg: 'var(--color-danger-bg)' };
   };
 
   const badge = getScoreBadge(displayScore);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon-wrapper" style={{ background: 'rgba(16, 185, 129, 0.14)', color: 'var(--mint-light)' }}>
+          <div className="stat-icon-wrapper" style={{ background: 'var(--growth-green-light)', color: 'var(--growth-green)' }}>
             <Award size={24} />
           </div>
           <div>
             <div className="stat-label">Financial Health Score</div>
             <div className="stat-value" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span>{displayScore}/100</span>
-              <span style={{ fontSize: '0.78rem', fontWeight: '700', padding: '2px 8px', borderRadius: '12px', background: badge.bg, color: badge.color }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: '700', padding: '3px 10px', borderRadius: '12px', background: badge.bg, color: badge.color }}>
                 {badge.label}
               </span>
             </div>
@@ -64,7 +64,7 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper" style={{ background: 'var(--color-info-bg)', color: 'var(--color-info)' }}>
+          <div className="stat-icon-wrapper stat-icon-remaining">
             <Coins size={24} />
           </div>
           <div>
@@ -74,20 +74,20 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper" style={{ background: 'var(--color-warning-bg)', color: 'var(--color-warning)' }}>
+          <div className="stat-icon-wrapper stat-icon-spent">
             <TrendingUp size={24} />
           </div>
           <div>
             <div className="stat-label">Largest Expense</div>
             <div className="stat-value">{currency}{maxExpense.amount.toFixed(2)}</div>
-            <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.8rem', color: 'var(--charcoal-muted)', marginTop: '2px' }}>
               {maxExpense.desc}
             </div>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper" style={{ background: 'var(--bg-surface)', color: 'var(--mint-light)' }}>
+          <div className="stat-icon-wrapper" style={{ background: 'var(--bg-surface)', color: 'var(--charcoal-mid)' }}>
             <Calendar size={24} />
           </div>
           <div>
@@ -101,18 +101,19 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
         <div className="card-header">
           <div>
             <div className="card-title">
-              <PieChart size={20} color="var(--mint-light)" />
+              <PieChart size={20} color="var(--growth-green)" />
               <span>Category Distribution</span>
             </div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Distribution of your recorded expenditures.
+            <div style={{ fontSize: '0.85rem', color: 'var(--charcoal-muted)', marginTop: '2px' }}>
+              Detailed breakdown of where your money was spent.
             </div>
           </div>
         </div>
 
         {categoryArray.length === 0 ? (
           <div className="empty-state">
-            <p>No expenses yet. Add expenses to generate category analysis.</p>
+            <p>No expenses recorded yet.</p>
+            <div className="hint">Log your expenses in the ledger to view this distribution</div>
           </div>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -122,8 +123,8 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
                   <div style={{ fontWeight: '700', fontSize: '0.95rem', color: 'var(--text-main)' }}>
                     {item.category}
                   </div>
-                  <div style={{ fontWeight: '700', color: 'var(--text-main)' }}>
-                    {currency}{item.amount.toFixed(2)} <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: '500' }}>({item.percentage}%)</span>
+                  <div style={{ fontWeight: '800', color: 'var(--text-main)' }}>
+                    {currency}{item.amount.toFixed(2)} <span style={{ color: 'var(--charcoal-muted)', fontSize: '0.85rem', fontWeight: '500' }}>({item.percentage}%)</span>
                   </div>
                 </div>
                 <div className="progress-bar-bg" style={{ height: '8px', marginTop: 0 }}>
@@ -131,7 +132,7 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
                     className="progress-bar-fill"
                     style={{
                       width: `${item.percentage}%`,
-                      background: 'linear-gradient(90deg, #10b981 0%, #06b6d4 100%)'
+                      background: 'var(--growth-green)'
                     }}
                   />
                 </div>
@@ -144,36 +145,36 @@ export default function Analytics({ expenses, budgetData, currency = '₹' }) {
       <div className="harmony-card">
         <div className="card-header">
           <div className="card-title">
-            <BarChart3 size={20} color="var(--mint-light)" />
-            <span>Financial Wellness Principles</span>
+            <BarChart3 size={20} color="var(--growth-green)" />
+            <span>Financial Growth Principles</span>
           </div>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
-          <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontWeight: '700', color: 'var(--mint-light)', marginBottom: '4px' }}>
-              Daily Consistency
+          <div style={{ padding: '18px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border-card)' }}>
+            <div style={{ fontWeight: '800', color: 'var(--growth-green)', marginBottom: '4px' }}>
+              Daily Log Habit
             </div>
-            <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-              Record expenses immediately as they happen to keep your awareness sharp and budget honest.
+            <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              Record expenses immediately upon purchase. Awareness creates financial discipline and eliminates mystery spending.
             </div>
           </div>
 
-          <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontWeight: '700', color: 'var(--mint-light)', marginBottom: '4px' }}>
+          <div style={{ padding: '18px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border-card)' }}>
+            <div style={{ fontWeight: '800', color: 'var(--growth-green)', marginBottom: '4px' }}>
               Pay Yourself First
             </div>
-            <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-              Allocate 20% into savings or emergency buffer right when you receive your monthly income.
+            <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              Automatically allocate 20% into savings or emergency funds the moment income is received, before lifestyle spending.
             </div>
           </div>
 
-          <div style={{ padding: '16px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontWeight: '700', color: 'var(--mint-light)', marginBottom: '4px' }}>
-              Pace Against Time
+          <div style={{ padding: '18px', borderRadius: 'var(--radius-md)', background: 'var(--bg-surface)', border: '1px solid var(--border-card)' }}>
+            <div style={{ fontWeight: '800', color: 'var(--growth-green)', marginBottom: '4px' }}>
+              365-Day Velocity
             </div>
-            <div style={{ fontSize: '0.86rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-              Ensure your step targets stay within 365 days so long-term goals remain realistic and achievable.
+            <div style={{ fontSize: '0.88rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              Keep savings milestones bounded to 365 steps or fewer to maintain momentum, motivation, and tangible progress.
             </div>
           </div>
         </div>

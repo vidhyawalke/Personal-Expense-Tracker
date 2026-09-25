@@ -1,8 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { Compass, TrendingUp, Save, Settings, Lock, Unlock, CheckCircle2, AlertTriangle, Calendar } from 'lucide-react';
+import React, { useState } from 'react';
+import { Compass, TrendingUp, Save, Settings, Lock, Unlock, CheckCircle2, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
-// Safe 2-decimal floating point precision
 const round2 = (num) => Math.round((Number(num) || 0) * 100) / 100;
 
 export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, currency = '₹' }) {
@@ -18,7 +17,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
   const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
   const [validationError, setValidationError] = useState('');
 
-  // Active saved settings from parent budgetData
+  // Active saved configuration
   const savedBoxes = savingsConfig.saved_boxes || [];
   const activeGoal = Number(savingsConfig.goal) || 0;
   const activeStep = Number(savingsConfig.target_box_amount) || 0;
@@ -29,7 +28,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
   const liveGoal = parseFloat(goalInput) || 0;
   const liveStep = parseFloat(stepInput) || 0;
   
-  // Live calculation of required steps
+  // Live calculation of days/weeks/months
   const liveCalculatedSteps = (liveGoal > 0 && liveStep > 0) ? Math.ceil(round2(liveGoal / liveStep)) : 0;
   const exceedsMaxSteps = liveCalculatedSteps > 365;
 
@@ -76,30 +75,29 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
     const parsedStep = parseFloat(stepInput);
 
     if (isNaN(parsedIncome) || parsedIncome <= 0) {
-      setValidationError("Please enter a valid monthly income.");
+      setValidationError("Please enter a valid positive monthly income.");
       return;
     }
     if (isNaN(parsedBudget) || parsedBudget <= 0) {
-      setValidationError("Please enter a valid spending limit.");
+      setValidationError("Please enter a valid positive spending limit.");
       return;
     }
     if (isNaN(parsedGoal) || parsedGoal <= 0) {
-      setValidationError("Please enter a savings goal amount (e.g. 200).");
+      setValidationError(`Please enter a savings goal amount (e.g. 5000 or 200).`);
       return;
     }
     if (isNaN(parsedStep) || parsedStep <= 0) {
-      setValidationError(`Please enter the amount you can save per ${unitName} (e.g. 10).`);
+      setValidationError(`Please enter the amount you want to save per ${unitName} (e.g. 50 or 10).`);
       return;
     }
 
     const calculatedSteps = Math.ceil(round2(parsedGoal / parsedStep));
     if (calculatedSteps > 365) {
       const minStepToFit = Math.ceil(round2(parsedGoal / 365));
-      setValidationError(`That would take ${calculatedSteps} ${unitPlural}! The limit is 365 steps. Please save at least ${currency}${minStepToFit} per ${unitName}.`);
+      setValidationError(`That would take ${calculatedSteps} ${unitPlural}! The limit is 365 steps. Increase your saving to at least ${currency}${minStepToFit} per ${unitName}.`);
       return;
     }
 
-    // Keep existing saved boxes if goal & step remained identical, otherwise reset
     const isSameTarget = parsedGoal === activeGoal && parsedStep === activeStep && cadence === activeCadence;
     const finalSavedBoxes = isSameTarget ? savedBoxes : [];
 
@@ -125,15 +123,14 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
     if (isAdding) {
       updated = [...savedBoxes, boxNumber];
       try {
-        // Multi-colored rainbow mix confetti
         confetti({
-          particleCount: 45,
-          spread: 70,
+          particleCount: 50,
+          spread: 75,
           origin: { y: 0.7 },
-          colors: ['#ff0055', '#00e1d9', '#ffbe0b', '#fb5607', '#ff006e', '#8338ec', '#3a86ff', '#10b981', '#f59e0b']
+          colors: ['#2e9e66', '#e07a5f', '#ffbe0b', '#3a86ff', '#8338ec', '#ff006e', '#00b4d8']
         });
       } catch {
-        // Confetti fallback
+        // Animation fallback
       }
     } else {
       updated = savedBoxes.filter(n => n !== boxNumber);
@@ -154,19 +151,19 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
       <div className="harmony-card">
         <div className="card-header">
           <div className="card-title">
-            <Settings size={22} color="var(--mint-light)" />
+            <Settings size={22} color="var(--growth-green)" />
             <span>Budget & Savings Configuration</span>
           </div>
           {activeGoal > 0 && activeStep > 0 && savingsConfig.isConfigSaved && (
-            <span style={{ fontSize: '0.8rem', color: 'var(--mint-light)', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600' }}>
-              <Unlock size={14} /> Tracker Active
+            <span style={{ fontSize: '0.84rem', color: 'var(--growth-green)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '700' }}>
+              <Unlock size={16} /> Tracker Unlocked
             </span>
           )}
         </div>
 
         {validationError && (
           <div className="alert-banner danger" style={{ marginBottom: '14px' }}>
-            <AlertTriangle size={18} />
+            <AlertCircle size={18} />
             <span>{validationError}</span>
           </div>
         )}
@@ -174,19 +171,19 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
         {saveSuccessMsg && (
           <div className="alert-banner success" style={{ marginBottom: '14px' }}>
             <CheckCircle2 size={18} />
-            <span>Budget settings saved! Tracker unlocked below.</span>
+            <span>Configuration saved! Tracker blocks are now active below.</span>
           </div>
         )}
 
         <form onSubmit={handleSaveConfig}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '16px' }}>
             
             <div className="form-group">
               <label className="form-label">Monthly Income ({currency})</label>
               <input
                 type="number"
                 step="0.01"
-                placeholder="e.g. 25000"
+                placeholder="e.g. 50000"
                 className="form-input"
                 value={incomeInput}
                 onChange={(e) => setIncomeInput(e.target.value)}
@@ -199,7 +196,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
               <input
                 type="number"
                 step="0.01"
-                placeholder="e.g. 18000"
+                placeholder="e.g. 35000"
                 className="form-input"
                 value={budgetInput}
                 onChange={(e) => setBudgetInput(e.target.value)}
@@ -212,7 +209,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
               <input
                 type="number"
                 step="0.01"
-                placeholder="e.g. 200 or 5000"
+                placeholder="e.g. 200 or 10000"
                 className="form-input"
                 value={goalInput}
                 onChange={(e) => setGoalInput(e.target.value)}
@@ -252,7 +249,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
               <input
                 type="number"
                 step="0.01"
-                placeholder="e.g. 10"
+                placeholder="e.g. 10 or 500"
                 className="form-input"
                 value={stepInput}
                 onChange={(e) => setStepInput(e.target.value)}
@@ -262,28 +259,28 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
 
           </div>
 
-          {/* Live Calculation Preview */}
+          {/* Mathematical Duration Preview */}
           {liveGoal > 0 && liveStep > 0 && (
             <div className="calc-preview-box">
               <div>
-                <span>Calculation: </span>
+                <span>Mathematical Forecast: </span>
                 <span className="calc-preview-highlight">
-                  Saving {currency}{round2(liveStep)} per {unitName} will take {liveCalculatedSteps} {liveCalculatedSteps === 1 ? unitName : unitPlural} to save {currency}{round2(liveGoal)}.
+                  Saving {currency}{round2(liveStep)} per {unitName} covers {currency}{round2(liveGoal)} in exactly {liveCalculatedSteps} {liveCalculatedSteps === 1 ? unitName : unitPlural}.
                 </span>
               </div>
               {exceedsMaxSteps ? (
-                <span style={{ color: 'var(--color-danger)', fontWeight: '700', fontSize: '0.82rem' }}>
-                  ⚠️ Exceeds 365 steps limit (Max 365)
+                <span style={{ color: 'var(--color-danger)', fontWeight: '800', fontSize: '0.86rem' }}>
+                  ⚠️ Exceeds 365 steps ceiling (Max 365)
                 </span>
               ) : (
-                <span style={{ color: 'var(--mint-light)', fontWeight: '700', fontSize: '0.82rem' }}>
-                  ✓ {liveCalculatedSteps} blocks will be loaded
+                <span style={{ color: 'var(--growth-green)', fontWeight: '800', fontSize: '0.86rem' }}>
+                  ✓ {liveCalculatedSteps} interactive blocks will load
                 </span>
               )}
             </div>
           )}
 
-          <div style={{ marginTop: '16px', display: 'flex', gap: '10px' }}>
+          <div style={{ marginTop: '16px' }}>
             <button
               type="submit"
               className="btn-primary"
@@ -295,17 +292,17 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
         </form>
       </div>
 
-      {/* 50 / 30 / 20 Rule Section — Revealed after income is established */}
+      {/* 50 / 30 / 20 Budget Breakdown */}
       {income > 0 && (
         <div className="harmony-card">
           <div className="card-header">
             <div>
               <div className="card-title">
-                <Compass size={20} color="var(--mint-light)" />
-                <span>50 / 30 / 20 Budget Breakdown</span>
+                <Compass size={22} color="var(--growth-green)" />
+                <span>50 / 30 / 20 Growth Allocation</span>
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                Balanced distribution based on {currency}{income.toLocaleString('en-US', { minimumFractionDigits: 2 })} monthly income.
+              <div style={{ fontSize: '0.84rem', color: 'var(--charcoal-muted)', marginTop: '2px' }}>
+                Balanced proportion based on your {currency}{income.toLocaleString('en-US', { minimumFractionDigits: 2 })} monthly income.
               </div>
             </div>
           </div>
@@ -315,13 +312,13 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
               <div>
                 <div className="rule-percentage">50%</div>
                 <div className="rule-title">Needs</div>
-                <div className="rule-desc">Essentials: Rent, groceries, utility bills, commute, healthcare.</div>
+                <div className="rule-desc">Essentials: Rent, groceries, utility bills, health, commute.</div>
               </div>
               <div>
                 <div className="rule-target-amount">
                   Target: {currency}{needsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                <div style={{ fontSize: '0.82rem', color: 'var(--charcoal-muted)', marginTop: '4px' }}>
                   Spent: {currency}{actualNeeds.toFixed(2)} ({needsTarget > 0 ? ((actualNeeds / needsTarget) * 100).toFixed(0) : 0}%)
                 </div>
                 <div className="progress-bar-bg">
@@ -340,13 +337,13 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
               <div>
                 <div className="rule-percentage">30%</div>
                 <div className="rule-title">Wants</div>
-                <div className="rule-desc">Lifestyle: Dining out, hobbies, subscriptions, leisure, shopping.</div>
+                <div className="rule-desc">Lifestyle: Dining out, leisure, subscriptions, hobbies.</div>
               </div>
               <div>
                 <div className="rule-target-amount">
                   Target: {currency}{wantsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                <div style={{ fontSize: '0.82rem', color: 'var(--charcoal-muted)', marginTop: '4px' }}>
                   Spent: {currency}{totalWantsWithOther.toFixed(2)} ({wantsTarget > 0 ? ((totalWantsWithOther / wantsTarget) * 100).toFixed(0) : 0}%)
                 </div>
                 <div className="progress-bar-bg">
@@ -354,7 +351,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
                     className="progress-bar-fill"
                     style={{
                       width: `${Math.min(100, wantsTarget > 0 ? (totalWantsWithOther / wantsTarget) * 100 : 0)}%`,
-                      background: 'var(--color-warning)'
+                      background: 'var(--terracotta)'
                     }}
                   />
                 </div>
@@ -364,22 +361,22 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
             <div className="rule-box savings">
               <div>
                 <div className="rule-percentage">20%</div>
-                <div className="rule-title">Savings & Debt</div>
-                <div className="rule-desc">Future: Emergency fund, investments, retirement, loan repayments.</div>
+                <div className="rule-title">Savings & Growth</div>
+                <div className="rule-desc">Future: Emergency fund, investments, retirement, debt payoff.</div>
               </div>
               <div>
                 <div className="rule-target-amount">
                   Target: {currency}{savingsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  Retained: {currency}{actualSavings.toFixed(2)} ({savingsTarget > 0 ? ((actualSavings / savingsTarget) * 100).toFixed(0) : 0}%)
+                <div style={{ fontSize: '0.82rem', color: 'var(--charcoal-muted)', marginTop: '4px' }}>
+                  Saved so far: {currency}{actualSavings.toFixed(2)} ({savingsTarget > 0 ? ((actualSavings / savingsTarget) * 100).toFixed(0) : 0}%)
                 </div>
                 <div className="progress-bar-bg">
                   <div
                     className="progress-bar-fill"
                     style={{
                       width: `${Math.min(100, savingsTarget > 0 ? (actualSavings / savingsTarget) * 100 : 0)}%`,
-                      background: 'var(--color-success)'
+                      background: 'var(--growth-green)'
                     }}
                   />
                 </div>
@@ -389,16 +386,16 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
         </div>
       )}
 
-      {/* Savings Goal Tracker — With Blur Lock Protection */}
+      {/* Savings Goal Tracker — Blur-Lock Protected */}
       <div className="savings-tracker-wrapper">
         
         {isSettingsLocked && (
           <div className="blur-lock-overlay">
             <div className="blur-lock-card">
               <div className="blur-lock-icon">🔒</div>
-              <h4>Savings Tracker Locked</h4>
+              <h4>Savings Goal Tracker Locked</h4>
               <p>
-                Choose your savings goal and the amount to save per {unitName} above, then click <strong>"Save Settings & Unlock Tracker"</strong> to generate your interactive tracking blocks.
+                Enter your target savings amount and the amount to save per {unitName} above, then click <strong>"Save Settings & Unlock Tracker"</strong> to generate your milestone blocks.
               </p>
             </div>
           </div>
@@ -408,27 +405,27 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses, cu
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '14px' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <TrendingUp size={22} color="var(--mint-light)" />
-                <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)' }}>
-                  Savings Goal Tracker
+                <TrendingUp size={22} color="var(--growth-green)" />
+                <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                  Savings Goal Milestones
                 </h3>
               </div>
-              <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                Save {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })} in {totalActiveSteps} steps of {currency}{activeStep.toLocaleString('en-US', { minimumFractionDigits: 2 })} each. Click any box when you complete your saving.
+              <p style={{ fontSize: '0.86rem', color: 'var(--charcoal-muted)', marginTop: '4px' }}>
+                Goal: {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })} in {totalActiveSteps} steps of {currency}{activeStep.toLocaleString('en-US', { minimumFractionDigits: 2 })} each. Click any block when you save!
               </p>
             </div>
 
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '1.35rem', fontWeight: '800', color: 'var(--text-main)' }}>
-                {currency}{totalSavedFromMatrix.toLocaleString('en-US', { minimumFractionDigits: 2 })} <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: '500' }}>/ {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
+              <div style={{ fontSize: '1.4rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                {currency}{totalSavedFromMatrix.toLocaleString('en-US', { minimumFractionDigits: 2 })} <span style={{ fontSize: '0.88rem', color: 'var(--charcoal-muted)', fontWeight: '600' }}>/ {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</span>
               </div>
-              <div style={{ fontSize: '0.82rem', fontWeight: '700', color: 'var(--mint-light)' }}>
+              <div style={{ fontSize: '0.84rem', fontWeight: '700', color: 'var(--growth-green)' }}>
                 {savedBoxes.length} of {totalActiveSteps} done ({matrixProgressPercent}%)
               </div>
             </div>
           </div>
 
-          <div className="progress-bar-bg" style={{ height: '10px', marginTop: '14px', marginBottom: '20px' }}>
+          <div className="progress-bar-bg" style={{ height: '12px', marginTop: '16px', marginBottom: '22px' }}>
             <div
               className="progress-bar-fill"
               style={{ width: `${matrixProgressPercent}%` }}

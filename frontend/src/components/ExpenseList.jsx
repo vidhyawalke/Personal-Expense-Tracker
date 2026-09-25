@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { Plus, Download, Trash2, Edit3, Search, X, AlertTriangle } from 'lucide-react';
+import { Plus, Download, Trash2, Edit3, Search, X, AlertCircle, CheckCircle2, DollarSign, Tag, Calendar } from 'lucide-react';
 
 const CATEGORIES = [
   'All',
-  'Housing & Utilities',
   'Food & Dining',
+  'Housing & Utilities',
   'Transportation',
   'Health & Wellness',
   'Entertainment',
   'Personal & Shopping',
   'Education & Career',
+  'Fixed Expenses',
   'Other'
 ];
+
+const round2 = (val) => Math.round((Number(val) || 0) * 100) / 100;
 
 export default function ExpenseList({
   expenses,
@@ -23,15 +26,24 @@ export default function ExpenseList({
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [editingExpense, setEditingExpense] = useState(null);
-  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+  
+  // Inline quick-add form state
+  const [quickDesc, setQuickDesc] = useState('');
+  const [quickAmount, setQuickAmount] = useState('');
+  const [quickCategory, setQuickCategory] = useState('Food & Dining');
+  const [quickDate, setQuickDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [quickError, setQuickError] = useState('');
+  const [quickSuccess, setQuickSuccess] = useState(false);
 
-  // Form State
-  const [description, setDescription] = useState('');
-  const [amount, setAmount] = useState('');
-  const [category, setCategory] = useState('Food & Dining');
-  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  // Edit Modal State
+  const [editingExpense, setEditingExpense] = useState(null);
+  const [editDesc, setEditDesc] = useState('');
+  const [editAmount, setEditAmount] = useState('');
+  const [editCategory, setEditCategory] = useState('Food & Dining');
+  const [editDate, setEditDate] = useState('');
+
+  // Delete Confirm
+  const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
   // Filtered List
   const filteredExpenses = expenses.filter(exp => {
@@ -43,87 +55,186 @@ export default function ExpenseList({
     return matchesSearch && matchesCategory;
   });
 
-  const handleOpenAddModal = () => {
-    setDescription('');
-    setAmount('');
-    setCategory('Food & Dining');
-    setDate(new Date().toISOString().split('T')[0]);
-    setIsAddModalOpen(true);
-  };
+  const totalFiltered = round2(filteredExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0));
 
-  const handleOpenEditModal = (exp) => {
-    setEditingExpense(exp);
-    setDescription(exp.description);
-    setAmount(exp.amount.toString());
-    setCategory(exp.category || 'Food & Dining');
-    setDate(exp.date || new Date().toISOString().split('T')[0]);
-  };
-
-  const handleSubmitAdd = (e) => {
+  // Quick Add Form Handler
+  const handleQuickAdd = (e) => {
     e.preventDefault();
-    const cleanDesc = description.trim();
-    const numAmount = parseFloat(amount);
+    setQuickError('');
 
-    if (!cleanDesc) {
-      alert("Please type what you spent on.");
+    const trimmedDesc = quickDesc.trim();
+    const parsedAmount = parseFloat(quickAmount);
+
+    if (!trimmedDesc) {
+      setQuickError('Please enter what you spent on (e.g. Groceries).');
       return;
     }
-    if (isNaN(numAmount) || numAmount <= 0) {
-      alert("Please enter how much you spent.");
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      setQuickError(`Please enter a valid amount greater than 0.`);
       return;
     }
 
     onAddExpense({
-      description: cleanDesc,
-      amount: numAmount,
-      category,
-      date
+      description: trimmedDesc,
+      amount: round2(parsedAmount),
+      category: quickCategory,
+      date: quickDate || new Date().toISOString().split('T')[0]
     });
-    setIsAddModalOpen(false);
+
+    setQuickDesc('');
+    setQuickAmount('');
+    setQuickSuccess(true);
+    setTimeout(() => setQuickSuccess(false), 2500);
   };
 
-  const handleSubmitEdit = (e) => {
-    e.preventDefault();
-    const cleanDesc = description.trim();
-    const numAmount = parseFloat(amount);
+  const handleOpenEdit = (exp) => {
+    setEditingExpense(exp);
+    setEditDesc(exp.description || '');
+    setEditAmount(String(exp.amount || ''));
+    setEditCategory(exp.category || 'Food & Dining');
+    setEditDate(exp.date || new Date().toISOString().split('T')[0]);
+  };
 
-    if (!cleanDesc) {
-      alert("Please type what you spent on.");
-      return;
-    }
-    if (isNaN(numAmount) || numAmount <= 0) {
-      alert("Please enter how much you spent.");
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    const trimmed = editDesc.trim();
+    const parsed = parseFloat(editAmount);
+
+    if (!trimmed || isNaN(parsed) || parsed <= 0) {
+      alert('Please enter a valid description and amount.');
       return;
     }
 
     onUpdateExpense(editingExpense.id, {
-      description: cleanDesc,
-      amount: numAmount,
-      category,
-      date
+      description: trimmed,
+      amount: round2(parsed),
+      category: editCategory,
+      date: editDate
     });
+
     setEditingExpense(null);
   };
 
-  const confirmDelete = () => {
+  const handleConfirmDelete = () => {
     if (deleteConfirmId !== null) {
       onDeleteExpense(deleteConfirmId);
       setDeleteConfirmId(null);
     }
   };
 
-  const totalFiltered = filteredExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
-
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       
-      <div className="harmony-card" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', flex: 1 }}>
+      {/* Inline Quick-Add Card */}
+      <div className="harmony-card">
+        <div className="card-header">
+          <div className="card-title">
+            <Plus size={20} color="var(--growth-green)" />
+            <span>Quick Add Expense</span>
+          </div>
+          <span style={{ fontSize: '0.84rem', color: 'var(--charcoal-muted)' }}>
+            Record an expense directly into your ledger
+          </span>
+        </div>
+
+        {quickError && (
+          <div className="alert-banner danger" style={{ marginBottom: '14px' }}>
+            <AlertCircle size={18} />
+            <span>{quickError}</span>
+          </div>
+        )}
+
+        {quickSuccess && (
+          <div className="alert-banner success" style={{ marginBottom: '14px' }}>
+            <CheckCircle2 size={18} />
+            <span>Expense recorded successfully!</span>
+          </div>
+        )}
+
+        <form onSubmit={handleQuickAdd}>
+          <div className="quick-add-grid">
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label">What did you spend on?</label>
+              <input
+                type="text"
+                placeholder="e.g. Groceries, Electricity, Coffee"
+                className="form-input"
+                value={quickDesc}
+                onChange={(e) => setQuickDesc(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label">Amount ({currency})</label>
+              <input
+                type="number"
+                step="0.01"
+                placeholder="e.g. 250.00"
+                className="form-input"
+                value={quickAmount}
+                onChange={(e) => setQuickAmount(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label">Category</label>
+              <select
+                className="form-select"
+                value={quickCategory}
+                onChange={(e) => setQuickCategory(e.target.value)}
+              >
+                {CATEGORIES.filter(c => c !== 'All').map(c => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: 0 }}>
+              <label className="form-label">Date</label>
+              <input
+                type="date"
+                className="form-input"
+                value={quickDate}
+                onChange={(e) => setQuickDate(e.target.value)}
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn-primary" style={{ height: '44px' }}>
+              <Plus size={18} /> Add
+            </button>
+          </div>
+        </form>
+      </div>
+
+      {/* Expenses Ledger Card */}
+      <div className="harmony-card">
+        <div className="card-header">
+          <div>
+            <div className="card-title">
+              <span>Expenses Ledger</span>
+            </div>
+            <div style={{ fontSize: '0.86rem', color: 'var(--charcoal-muted)', marginTop: '2px' }}>
+              Showing {filteredExpenses.length} entries — Total: <strong>{currency}{totalFiltered.toFixed(2)}</strong>
+            </div>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <button className="btn-secondary" onClick={onExportCSV} title="Export to CSV spreadsheet">
+              <Download size={16} /> Export CSV
+            </button>
+          </div>
+        </div>
+
+        {/* Filter & Search Bar */}
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '18px' }}>
           <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
-            <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--charcoal-light)' }} />
             <input
               type="text"
-              placeholder="e.g. groceries, rent, uber..."
+              placeholder="Search expenses by name or category..."
               className="form-input"
               style={{ paddingLeft: '40px' }}
               value={searchTerm}
@@ -132,7 +243,7 @@ export default function ExpenseList({
           </div>
 
           <select
-            className="form-input"
+            className="form-select"
             style={{ width: '220px' }}
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -145,30 +256,11 @@ export default function ExpenseList({
           </select>
         </div>
 
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button className="btn-primary" onClick={handleOpenAddModal}>
-            <Plus size={18} /> Add Expense
-          </button>
-
-          <button className="btn-secondary" onClick={onExportCSV}>
-            <Download size={18} /> Download CSV
-          </button>
-        </div>
-      </div>
-
-      <div className="harmony-card">
-        <div className="card-header">
-          <div>
-            <div className="card-title">Your Expenses</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-              Showing {filteredExpenses.length} item(s) — Total: {currency}{totalFiltered.toFixed(2)}
-            </div>
-          </div>
-        </div>
-
+        {/* Table of expenses */}
         {filteredExpenses.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '48px 20px', color: 'var(--text-muted)' }}>
-            <p style={{ fontSize: '1rem', fontWeight: '500' }}>No expenses found. Try adding one above!</p>
+          <div className="empty-state">
+            <p>No expenses found in your ledger.</p>
+            <div className="hint">Type an expense in the box above and click "Add" to start tracking!</div>
           </div>
         ) : (
           <div className="data-table-wrapper">
@@ -176,7 +268,7 @@ export default function ExpenseList({
               <thead>
                 <tr>
                   <th>Date</th>
-                  <th>What</th>
+                  <th>Description</th>
                   <th>Category</th>
                   <th style={{ textAlign: 'right' }}>Amount</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
@@ -185,10 +277,10 @@ export default function ExpenseList({
               <tbody>
                 {filteredExpenses.map((exp) => (
                   <tr key={exp.id}>
-                    <td style={{ fontWeight: '500', color: 'var(--text-secondary)' }}>
+                    <td style={{ fontWeight: '600', color: 'var(--charcoal-muted)' }}>
                       {exp.date}
                     </td>
-                    <td style={{ fontWeight: '600', color: 'var(--text-main)' }}>
+                    <td style={{ fontWeight: '700', color: 'var(--text-main)' }}>
                       {exp.description}
                     </td>
                     <td>
@@ -196,21 +288,21 @@ export default function ExpenseList({
                         {exp.category || 'Other'}
                       </span>
                     </td>
-                    <td style={{ textAlign: 'right', fontWeight: '700', color: 'var(--mint-light)' }}>
+                    <td style={{ textAlign: 'right', fontWeight: '800', color: 'var(--growth-green)' }}>
                       {currency}{Number(exp.amount).toFixed(2)}
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: '6px', justifyContent: 'flex-end' }}>
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
                         <button
                           className="btn-icon"
-                          title="Edit"
-                          onClick={() => handleOpenEditModal(exp)}
+                          title="Edit Expense"
+                          onClick={() => handleOpenEdit(exp)}
                         >
                           <Edit3 size={15} />
                         </button>
                         <button
                           className="btn-icon danger"
-                          title="Delete"
+                          title="Delete Expense"
                           onClick={() => setDeleteConfirmId(exp.id)}
                         >
                           <Trash2 size={15} />
@@ -225,143 +317,51 @@ export default function ExpenseList({
         )}
       </div>
 
-      {isAddModalOpen && (
-        <div className="modal-backdrop" onClick={() => setIsAddModalOpen(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-main)' }}>
-                Add Expense
-              </h3>
-              <button
-                className="btn-icon"
-                onClick={() => setIsAddModalOpen(false)}
-              >
-                <X size={18} />
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmitAdd}>
-              <div className="form-group">
-                <label className="form-label">What did you spend on?</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Weekly groceries"
-                  className="form-input"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  required
-                  autoFocus
-                />
-              </div>
-
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div className="form-group">
-                  <label className="form-label">How much? ({currency})</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    placeholder="e.g. 45.50"
-                    className="form-input"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label className="form-label">When?</label>
-                  <input
-                    type="date"
-                    className="form-input"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">Category</label>
-                <select
-                  className="form-input"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                >
-                  {CATEGORIES.filter(c => c !== 'All').map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="modal-actions">
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => setIsAddModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="btn-primary"
-                >
-                  Save
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
+      {/* Edit Expense Modal */}
       {editingExpense && (
         <div className="modal-backdrop" onClick={() => setEditingExpense(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-main)' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
                 Edit Expense
               </h3>
-              <button
-                className="btn-icon"
-                onClick={() => setEditingExpense(null)}
-              >
+              <button className="btn-icon" onClick={() => setEditingExpense(null)}>
                 <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={handleSubmitEdit}>
+            <form onSubmit={handleSaveEdit}>
               <div className="form-group">
                 <label className="form-label">What did you spend on?</label>
                 <input
                   type="text"
-                  placeholder="e.g. Monthly rent"
                   className="form-input"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  value={editDesc}
+                  onChange={(e) => setEditDesc(e.target.value)}
                   required
                 />
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div className="form-group">
-                  <label className="form-label">How much? ({currency})</label>
+                  <label className="form-label">Amount ({currency})</label>
                   <input
                     type="number"
                     step="0.01"
-                    placeholder="e.g. 120.00"
                     className="form-input"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
+                    value={editAmount}
+                    onChange={(e) => setEditAmount(e.target.value)}
                     required
                   />
                 </div>
 
                 <div className="form-group">
-                  <label className="form-label">When?</label>
+                  <label className="form-label">Date</label>
                   <input
                     type="date"
                     className="form-input"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
+                    value={editDate}
+                    onChange={(e) => setEditDate(e.target.value)}
                     required
                   />
                 </div>
@@ -370,9 +370,9 @@ export default function ExpenseList({
               <div className="form-group">
                 <label className="form-label">Category</label>
                 <select
-                  className="form-input"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
+                  className="form-select"
+                  value={editCategory}
+                  onChange={(e) => setEditCategory(e.target.value)}
                 >
                   {CATEGORIES.filter(c => c !== 'All').map(c => (
                     <option key={c} value={c}>{c}</option>
@@ -388,11 +388,8 @@ export default function ExpenseList({
                 >
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  className="btn-primary"
-                >
-                  Update
+                <button type="submit" className="btn-primary">
+                  Save Changes
                 </button>
               </div>
             </form>
@@ -400,36 +397,26 @@ export default function ExpenseList({
         </div>
       )}
 
+      {/* Delete Confirmation Modal */}
       {deleteConfirmId !== null && (
         <div className="modal-backdrop" onClick={() => setDeleteConfirmId(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
-              <div style={{ background: 'var(--color-danger-bg)', color: 'var(--color-danger)', padding: '10px', borderRadius: 'var(--radius-md)' }}>
-                <AlertTriangle size={24} />
-              </div>
-              <div>
-                <h3 style={{ fontSize: '1.1rem', fontWeight: '700', color: 'var(--forest-900)' }}>
-                  Delete this expense?
-                </h3>
-                <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                  This can't be undone.
-                </p>
-              </div>
-            </div>
-
+            <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--color-danger)', marginBottom: '8px' }}>
+              Delete Expense
+            </h3>
+            <p style={{ color: 'var(--charcoal-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>
+              Are you sure you want to delete this expense? This action will update your remaining budget.
+            </p>
             <div className="modal-actions">
-              <button
-                className="btn-secondary"
-                onClick={() => setDeleteConfirmId(null)}
-              >
+              <button className="btn-secondary" onClick={() => setDeleteConfirmId(null)}>
                 Cancel
               </button>
               <button
                 className="btn-primary"
                 style={{ background: 'var(--color-danger)' }}
-                onClick={confirmDelete}
+                onClick={handleConfirmDelete}
               >
-                Delete
+                Confirm Delete
               </button>
             </div>
           </div>

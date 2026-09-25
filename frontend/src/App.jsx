@@ -21,12 +21,14 @@ const DEFAULT_BUDGET = {
   savings_target: { goal: 0, target_box_amount: 0, cadence: 'daily', isConfigSaved: false, saved_boxes: [] },
   checklist: [
     { id: 1, text: 'Review today\'s purchases', checked: false },
-    { id: 2, text: 'Log all expenses', checked: false },
-    { id: 3, text: 'Check remaining allowance', checked: false },
-    { id: 4, text: 'Complete your daily/weekly savings step', checked: false },
-    { id: 5, text: 'Plan tomorrow\'s essentials', checked: false },
+    { id: 2, text: 'Log all daily transactions', checked: false },
+    { id: 3, text: 'Monitor spending pace vs limit', checked: false },
+    { id: 4, text: 'Check off your savings milestone step', checked: false },
+    { id: 5, text: 'Plan next week\'s essentials', checked: false },
   ]
 };
+
+const round2 = (val) => Math.round((Number(val) || 0) * 100) / 100;
 
 function loadFromStorage(key, fallback) {
   try {
@@ -65,12 +67,12 @@ export default function App() {
 
   // Budget warnings
   const evaluateBudgetWarning = useCallback((expensesList, currentBudget, currSym) => {
-    const total = expensesList.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0);
+    const total = round2(expensesList.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0));
     const limit = Number(currentBudget?.monthly_budget) || 0;
     if (limit > 0 && total > limit) {
       setWarning(`Budget Exceeded: Spent ${currSym}${total.toFixed(2)} of ${currSym}${limit.toFixed(2)} (over by ${currSym}${(total - limit).toFixed(2)}).`);
     } else if (limit > 0 && total >= limit * 0.85) {
-      setWarning(`Caution: ${((total / limit) * 100).toFixed(0)}% of budget utilized — only ${currSym}${(limit - total).toFixed(2)} remaining.`);
+      setWarning(`Budget Alert: ${((total / limit) * 100).toFixed(0)}% used — ${currSym}${(limit - total).toFixed(2)} remaining.`);
     } else {
       setWarning(null);
     }
@@ -82,14 +84,14 @@ export default function App() {
 
   const handleAddExpense = (newExpense) => {
     const id = Date.now();
-    const entry = { id, ...newExpense };
+    const entry = { id, ...newExpense, amount: round2(newExpense.amount) };
     const updated = [entry, ...expenses];
     setExpenses(updated);
     saveToStorage(STORAGE_KEYS.expenses, updated);
   };
 
   const handleUpdateExpense = (id, updatedData) => {
-    const updated = expenses.map(e => e.id === id ? { ...e, ...updatedData } : e);
+    const updated = expenses.map(e => e.id === id ? { ...e, ...updatedData, amount: round2(updatedData.amount) } : e);
     setExpenses(updated);
     saveToStorage(STORAGE_KEYS.expenses, updated);
   };
@@ -162,8 +164,8 @@ export default function App() {
     };
     const updatedBudget = {
       ...budgetData,
-      monthly_income: Math.round(inc * 100) / 100,
-      monthly_budget: Math.round(bud * 100) / 100
+      monthly_income: round2(inc),
+      monthly_budget: round2(bud)
     };
 
     setUserProfile(newProfile);
@@ -202,8 +204,8 @@ export default function App() {
     };
     const updatedBudget = {
       ...budgetData,
-      monthly_income: Math.round(inc * 100) / 100,
-      monthly_budget: Math.round(bud * 100) / 100
+      monthly_income: round2(inc),
+      monthly_budget: round2(bud)
     };
 
     setUserProfile(updatedProfile);
@@ -215,23 +217,23 @@ export default function App() {
     setIsEditProfileModalOpen(false);
   };
 
-  // If user has not set their name or details, progressive disclosure shows the onboarding setup first
+  // Progressive Onboarding: shown first when user has not yet set their profile
   if (!userProfile?.name) {
     return (
       <div className="setup-overlay">
         <div className="setup-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
-            <img src={harmonyLogo} alt="Harmony" style={{ height: '46px', borderRadius: '8px' }} />
+            <img src={harmonyLogo} alt="Harmony" style={{ height: '48px', borderRadius: '8px' }} />
             <div>
               <h2>Welcome to Harmony</h2>
-              <div style={{ fontSize: '0.84rem', color: 'var(--mint-light)', fontWeight: '600' }}>
-                Personal Finance & Budget Tracker
+              <div style={{ fontSize: '0.86rem', color: 'var(--growth-green)', fontWeight: '700' }}>
+                Financial Growth & Expense Tracker
               </div>
             </div>
           </div>
           
           <p>
-            Please tell us your name and basic details to personalize your workspace before viewing your dashboard.
+            Please set up your name and baseline financial limits to initialize your personalized growth tracker.
           </p>
 
           <form onSubmit={handleOnboardingSubmit}>
@@ -239,7 +241,7 @@ export default function App() {
               <label className="form-label">Your Name</label>
               <input
                 type="text"
-                placeholder="e.g. Vidhya or Alex"
+                placeholder="e.g. Alex Morgan"
                 className="form-input"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
@@ -269,7 +271,7 @@ export default function App() {
               <input
                 type="number"
                 step="0.01"
-                placeholder="e.g. 25000 or 3500"
+                placeholder="e.g. 50000"
                 className="form-input"
                 value={formIncome}
                 onChange={(e) => setFormIncome(e.target.value)}
@@ -282,7 +284,7 @@ export default function App() {
               <input
                 type="number"
                 step="0.01"
-                placeholder="e.g. 18000 or 2000"
+                placeholder="e.g. 35000"
                 className="form-input"
                 value={formBudget}
                 onChange={(e) => setFormBudget(e.target.value)}
@@ -292,7 +294,7 @@ export default function App() {
 
             <div style={{ marginTop: '24px' }}>
               <button type="submit" className="btn-primary" style={{ width: '100%', padding: '12px' }}>
-                Continue to Tracker <ArrowRight size={18} />
+                Initialize My Tracker <ArrowRight size={18} />
               </button>
             </div>
           </form>
@@ -308,8 +310,8 @@ export default function App() {
         <div className="modal-backdrop" onClick={() => setIsEditProfileModalOpen(false)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--text-main)' }}>
-                Edit Your Details
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                Edit Your Financial Baseline
               </h3>
               <button
                 className="btn-icon"
@@ -324,7 +326,7 @@ export default function App() {
                 <label className="form-label">Your Name</label>
                 <input
                   type="text"
-                  placeholder="e.g. Vidhya"
+                  placeholder="e.g. Alex Morgan"
                   className="form-input"
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
@@ -353,7 +355,7 @@ export default function App() {
                 <input
                   type="number"
                   step="0.01"
-                  placeholder="e.g. 25000"
+                  placeholder="e.g. 50000"
                   className="form-input"
                   value={formIncome}
                   onChange={(e) => setFormIncome(e.target.value)}
@@ -366,7 +368,7 @@ export default function App() {
                 <input
                   type="number"
                   step="0.01"
-                  placeholder="e.g. 18000"
+                  placeholder="e.g. 35000"
                   className="form-input"
                   value={formBudget}
                   onChange={(e) => setFormBudget(e.target.value)}
@@ -403,10 +405,10 @@ export default function App() {
             <div className="brand-title">
               Harmony
               <span className="brand-user-greeting">
-                Hello, {userProfile.name} 👋
+                Hello, {userProfile.name}
               </span>
             </div>
-            <p className="brand-subtitle">Natural, breathable money tracker</p>
+            <p className="brand-subtitle">Financial Growth & Expense Tracker</p>
           </div>
         </div>
 
@@ -415,9 +417,9 @@ export default function App() {
             type="button"
             className="btn-profile-edit"
             onClick={handleOpenEditProfile}
-            title="Edit Name, Currency & Budget"
+            title="Edit Baseline Details"
           >
-            <User size={14} /> {currency} Details
+            <User size={14} /> {currency} Baseline
           </button>
           <ClockWidget />
         </div>
@@ -429,25 +431,25 @@ export default function App() {
           className={`nav-tab-btn ${activeTab === 'dashboard' ? 'active' : ''}`}
           onClick={() => setActiveTab('dashboard')}
         >
-          <LayoutDashboard size={16} /> Home
+          <LayoutDashboard size={18} /> Tracker & Home
         </button>
         <button
           className={`nav-tab-btn ${activeTab === 'expenses' ? 'active' : ''}`}
           onClick={() => setActiveTab('expenses')}
         >
-          <Receipt size={16} /> Expenses
+          <Receipt size={18} /> Expenses Ledger
         </button>
         <button
           className={`nav-tab-btn ${activeTab === 'budget' ? 'active' : ''}`}
           onClick={() => setActiveTab('budget')}
         >
-          <Target size={16} /> Budget & Goals
+          <Target size={18} /> Budget & Goals
         </button>
         <button
           className={`nav-tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
           onClick={() => setActiveTab('analytics')}
         >
-          <BarChart2 size={16} /> Analytics
+          <BarChart2 size={18} /> Analytics & Reports
         </button>
       </nav>
 
@@ -461,6 +463,8 @@ export default function App() {
               onToggleChecklist={handleToggleChecklist}
               warning={warning}
               currency={currency}
+              onAddExpense={handleAddExpense}
+              onNavigateTab={setActiveTab}
             />
           )}
           {activeTab === 'expenses' && (
