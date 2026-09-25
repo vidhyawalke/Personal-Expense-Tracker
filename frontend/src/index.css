@@ -5,62 +5,76 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
   /* =========================================================
-     HARMONY FINANCIAL GROWTH PALETTE
-     Directly matched to user design spec:
-     - Growth Green:      #2e9e66 (Prosperity, Vitality)
-     - Soft Cream White:  #f7f9f7 (Clean, Breathable Atmosphere)
-     - Warm Terracotta:   #e07a5f (Balanced Accent / Spending)
-     - Deep Charcoal:     #1e293b (High-Contrast, Crisp Typography)
+     CREMA COZY COFFEE PALETTE
+     Warm, aromatic, comforting personal finance aesthetics:
+     - Rich Espresso:     #4a2c1d / #5c3826 (Primary Anchor)
+     - Roasted Caramel:   #b86b28 / #c88242 (Warm Golden Accent)
+     - Warm Latte Milk:   #f7f4ee (Clean, Soft, Breathable Cream Background)
+     - Porcelain White:   #ffffff (Card Surfaces)
+     - Dark Mocha Slate:  #241711 (Deep High-Contrast Typography)
+     - Froth Taupe:       #7a6658 (Secondary Labels)
      ========================================================= */
 
-  /* Growth Green System */
-  --growth-green:       #2e9e66;
-  --growth-green-hover: #258555;
-  --growth-green-light: #eaf6ef;
-  --growth-green-border: rgba(46, 158, 102, 0.28);
-  --growth-green-glow:  rgba(46, 158, 102, 0.2);
+  /* Crema Coffee Primary */
+  --coffee-dark:        #382115;
+  --coffee-primary:     #523222;
+  --coffee-hover:       #422618;
+  --coffee-light:       #f5ede4;
+  --coffee-border:      rgba(82, 50, 34, 0.22);
+  --coffee-glow:        rgba(82, 50, 34, 0.15);
 
-  /* Warm Terracotta Accent */
-  --terracotta:         #e07a5f;
-  --terracotta-hover:   #cf6c52;
-  --terracotta-light:   #fcf1ee;
-  --terracotta-border:  rgba(224, 122, 95, 0.3);
+  /* Roasted Caramel & Amber */
+  --caramel-accent:     #b86b28;
+  --caramel-hover:      #a25c1e;
+  --caramel-light:      #faf2e9;
+  --caramel-border:     rgba(184, 107, 40, 0.25);
 
-  /* Deep Charcoal Slate System */
-  --charcoal-dark:      #1e293b;
-  --charcoal-mid:       #334155;
-  --charcoal-muted:     #64748b;
-  --charcoal-light:     #94a3b8;
+  /* Deep Bean Charcoal */
+  --mocha-bean:         #241711;
+  --mocha-mid:          #423126;
+  --mocha-muted:        #705c50;
+  --mocha-light:        #a38f83;
 
-  /* Clean Light App Surfaces */
-  --bg-app:             #f7f9f8;
-  --bg-card:            #ffffff;
-  --bg-surface:         #f0f4f1;
-  --bg-surface-hover:   #e5ece7;
+  /* Cozy Background & Surfaces */
+  --bg-app:             #f7f4ee; /* Soft warm latte froth */
+  --bg-card:            #ffffff; /* Pure warm porcelain */
+  --bg-surface:         #f2ebd9; /* Foam cream */
+  --bg-surface-hover:   #eae1cd;
   --bg-input:           #ffffff;
 
   /* Borders & Shadows */
-  --border-subtle:      #e2e8e4;
-  --border-card:        #d9e2db;
-  --border-focus:       #2e9e66;
+  --border-subtle:      #e8decb;
+  --border-card:        #dfd3bd;
+  --border-focus:       #523222;
 
   /* Typography */
-  --text-main:          #1e293b;
-  --text-secondary:     #475569;
-  --text-muted:         #64748b;
+  --text-main:          #241711;
+  --text-secondary:     #574336;
+  --text-muted:         #7a6658;
+
+  /* Universal Color Theory — Financial Categories */
+  --cat-food:           #e07a5f; /* Warm Terracotta / Toast */
+  --cat-housing:        #3b82f6; /* Indigo / Shelter Blue */
+  --cat-transport:      #06b6d4; /* Motion Cyan */
+  --cat-health:         #10b981; /* Mint Vitality Green */
+  --cat-entertainment:  #8b5cf6; /* Velvet Violet */
+  --cat-shopping:       #ec4899; /* Rose Pink */
+  --cat-education:      #d97706; /* Golden Amber */
+  --cat-fixed:          #78350f; /* Deep Espresso */
+  --cat-other:          #78716c; /* Warm Stone */
 
   /* Status Colors */
-  --color-success:        #2e9e66;
-  --color-success-bg:     #eaf6ef;
-  --color-success-border: rgba(46, 158, 102, 0.3);
+  --color-success:        #2d8653;
+  --color-success-bg:     #edf7f0;
+  --color-success-border: rgba(45, 134, 83, 0.3);
 
-  --color-warning:        #e07a5f;
-  --color-warning-bg:     #fcf1ee;
-  --color-warning-border: rgba(224, 122, 95, 0.3);
+  --color-warning:        #b86b28;
+  --color-warning-bg:     #faf2e9;
+  --color-warning-border: rgba(184, 107, 40, 0.3);
 
-  --color-danger:         #e53e3e;
-  --color-danger-bg:      #fff5f5;
-  --color-danger-border:  rgba(229, 62, 62, 0.3);
+  --color-danger:         #c53030;
+  --color-danger-bg:      #fdf2f2;
+  --color-danger-border:  rgba(197, 48, 48, 0.3);
 
   --color-info:           #0284c7;
   --color-info-bg:        #f0f9ff;
@@ -70,12 +84,12 @@
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
-  --radius-xl: 20px;
+  --radius-xl: 22px;
 
   /* Shadows */
-  --shadow-sm: 0 1px 3px rgba(30, 41, 59, 0.05), 0 1px 2px rgba(30, 41, 59, 0.03);
-  --shadow-md: 0 4px 12px -2px rgba(30, 41, 59, 0.08), 0 2px 6px -1px rgba(30, 41, 59, 0.04);
-  --shadow-lg: 0 12px 30px -4px rgba(30, 41, 59, 0.12);
+  --shadow-sm: 0 1px 3px rgba(36, 23, 17, 0.05), 0 1px 2px rgba(36, 23, 17, 0.03);
+  --shadow-md: 0 4px 14px -2px rgba(36, 23, 17, 0.08), 0 2px 6px -1px rgba(36, 23, 17, 0.04);
+  --shadow-lg: 0 12px 32px -4px rgba(36, 23, 17, 0.12);
 
   font-family: var(--font-sans);
   line-height: 1.5;
@@ -95,8 +109,8 @@ body {
   min-height: 100vh;
   background-color: var(--bg-app);
   background-image: 
-    radial-gradient(circle at 10% 10%, rgba(46, 158, 102, 0.04) 0%, transparent 40%),
-    radial-gradient(circle at 90% 90%, rgba(224, 122, 95, 0.04) 0%, transparent 40%);
+    radial-gradient(circle at 10% 10%, rgba(184, 107, 40, 0.04) 0%, transparent 40%),
+    radial-gradient(circle at 90% 90%, rgba(82, 50, 34, 0.04) 0%, transparent 40%);
   background-attachment: fixed;
   color: var(--text-main);
   font-family: var(--font-sans);
@@ -115,8 +129,7 @@ button, input, select, textarea {
 /* Light, clear, professional placeholders */
 input::placeholder,
 textarea::placeholder {
-  color: var(--charcoal-light);
+  color: var(--mocha-light);
   opacity: 0.85;
   font-weight: 400;
-  font-style: normal;
 }

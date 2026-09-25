@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Plus, Download, Trash2, Edit3, Search, X, AlertCircle, CheckCircle2, DollarSign, Tag, Calendar } from 'lucide-react';
+import { getCategoryColor } from '../utils/categoryColors';
 
 const CATEGORIES = [
   'All',
@@ -129,10 +130,10 @@ export default function ExpenseList({
       <div className="harmony-card">
         <div className="card-header">
           <div className="card-title">
-            <Plus size={20} color="var(--growth-green)" />
-            <span>Quick Add Expense</span>
+            <Plus size={20} color="var(--coffee-primary)" />
+            <span>Quick Add Transaction</span>
           </div>
-          <span style={{ fontSize: '0.84rem', color: 'var(--charcoal-muted)' }}>
+          <span style={{ fontSize: '0.84rem', color: 'var(--mocha-muted)' }}>
             Record an expense directly into your ledger
           </span>
         </div>
@@ -147,7 +148,7 @@ export default function ExpenseList({
         {quickSuccess && (
           <div className="alert-banner success" style={{ marginBottom: '14px' }}>
             <CheckCircle2 size={18} />
-            <span>Expense recorded successfully!</span>
+            <span>Expense recorded in your ledger!</span>
           </div>
         )}
 
@@ -157,7 +158,7 @@ export default function ExpenseList({
               <label className="form-label">What did you spend on?</label>
               <input
                 type="text"
-                placeholder="e.g. Groceries, Electricity, Coffee"
+                placeholder="e.g. Morning Coffee, Rent, Dinner"
                 className="form-input"
                 value={quickDesc}
                 onChange={(e) => setQuickDesc(e.target.value)}
@@ -216,7 +217,7 @@ export default function ExpenseList({
             <div className="card-title">
               <span>Expenses Ledger</span>
             </div>
-            <div style={{ fontSize: '0.86rem', color: 'var(--charcoal-muted)', marginTop: '2px' }}>
+            <div style={{ fontSize: '0.86rem', color: 'var(--mocha-muted)', marginTop: '2px' }}>
               Showing {filteredExpenses.length} entries — Total: <strong>{currency}{totalFiltered.toFixed(2)}</strong>
             </div>
           </div>
@@ -231,10 +232,10 @@ export default function ExpenseList({
         {/* Filter & Search Bar */}
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '18px' }}>
           <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
-            <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--charcoal-light)' }} />
+            <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--mocha-light)' }} />
             <input
               type="text"
-              placeholder="Search expenses by name or category..."
+              placeholder="Search expenses by description or category..."
               className="form-input"
               style={{ paddingLeft: '40px' }}
               value={searchTerm}
@@ -259,8 +260,8 @@ export default function ExpenseList({
         {/* Table of expenses */}
         {filteredExpenses.length === 0 ? (
           <div className="empty-state">
-            <p>No expenses found in your ledger.</p>
-            <div className="hint">Type an expense in the box above and click "Add" to start tracking!</div>
+            <p>No transactions found matching your criteria.</p>
+            <div className="hint">Type an expense above to populate your financial ledger!</div>
           </div>
         ) : (
           <div className="data-table-wrapper">
@@ -275,42 +276,52 @@ export default function ExpenseList({
                 </tr>
               </thead>
               <tbody>
-                {filteredExpenses.map((exp) => (
-                  <tr key={exp.id}>
-                    <td style={{ fontWeight: '600', color: 'var(--charcoal-muted)' }}>
-                      {exp.date}
-                    </td>
-                    <td style={{ fontWeight: '700', color: 'var(--text-main)' }}>
-                      {exp.description}
-                    </td>
-                    <td>
-                      <span className="badge-category">
-                        {exp.category || 'Other'}
-                      </span>
-                    </td>
-                    <td style={{ textAlign: 'right', fontWeight: '800', color: 'var(--growth-green)' }}>
-                      {currency}{Number(exp.amount).toFixed(2)}
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                        <button
-                          className="btn-icon"
-                          title="Edit Expense"
-                          onClick={() => handleOpenEdit(exp)}
+                {filteredExpenses.map((exp) => {
+                  const catStyle = getCategoryColor(exp.category);
+                  return (
+                    <tr key={exp.id}>
+                      <td style={{ fontWeight: '600', color: 'var(--mocha-muted)' }}>
+                        {exp.date}
+                      </td>
+                      <td style={{ fontWeight: '700', color: 'var(--coffee-dark)' }}>
+                        {exp.description}
+                      </td>
+                      <td>
+                        <span
+                          className="badge-category"
+                          style={{
+                            background: catStyle.bg,
+                            color: catStyle.color,
+                            border: `1px solid ${catStyle.color}40`
+                          }}
                         >
-                          <Edit3 size={15} />
-                        </button>
-                        <button
-                          className="btn-icon danger"
-                          title="Delete Expense"
-                          onClick={() => setDeleteConfirmId(exp.id)}
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                          {exp.category || 'Other'}
+                        </span>
+                      </td>
+                      <td style={{ textAlign: 'right', fontWeight: '800', color: 'var(--coffee-primary)' }}>
+                        {currency}{Number(exp.amount).toFixed(2)}
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                          <button
+                            className="btn-icon"
+                            title="Edit Expense"
+                            onClick={() => handleOpenEdit(exp)}
+                          >
+                            <Edit3 size={15} />
+                          </button>
+                          <button
+                            className="btn-icon danger"
+                            title="Delete Expense"
+                            onClick={() => setDeleteConfirmId(exp.id)}
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -322,7 +333,7 @@ export default function ExpenseList({
         <div className="modal-backdrop" onClick={() => setEditingExpense(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--coffee-dark)' }}>
                 Edit Expense
               </h3>
               <button className="btn-icon" onClick={() => setEditingExpense(null)}>
@@ -404,8 +415,8 @@ export default function ExpenseList({
             <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--color-danger)', marginBottom: '8px' }}>
               Delete Expense
             </h3>
-            <p style={{ color: 'var(--charcoal-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>
-              Are you sure you want to delete this expense? This action will update your remaining budget.
+            <p style={{ color: 'var(--mocha-muted)', fontSize: '0.9rem', marginBottom: '20px' }}>
+              Are you sure you want to delete this expense? This action will adjust your remaining budget.
             </p>
             <div className="modal-actions">
               <button className="btn-secondary" onClick={() => setDeleteConfirmId(null)}>

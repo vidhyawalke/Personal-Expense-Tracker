@@ -5,13 +5,28 @@ import ExpenseList from './components/ExpenseList';
 import BudgetPlanner from './components/BudgetPlanner';
 import Analytics from './components/Analytics';
 import ClockWidget from './components/ClockWidget';
-import harmonyLogo from './assets/harmony_logo.png';
-import { LayoutDashboard, Receipt, Target, BarChart2, User, Edit3, X, Save, ArrowRight } from 'lucide-react';
+import { 
+  Coffee, 
+  CalendarCheck, 
+  CreditCard, 
+  Home, 
+  Search, 
+  LayoutDashboard, 
+  Receipt, 
+  Target, 
+  BarChart2, 
+  User, 
+  Edit3, 
+  X, 
+  Save, 
+  ArrowRight,
+  TrendingUp
+} from 'lucide-react';
 
 const STORAGE_KEYS = {
-  expenses: 'harmony_expenses',
-  budget: 'harmony_budget',
-  userProfile: 'harmony_user_profile',
+  expenses: 'crema_expenses',
+  budget: 'crema_budget',
+  userProfile: 'crema_user_profile',
 };
 
 const DEFAULT_BUDGET = {
@@ -20,11 +35,11 @@ const DEFAULT_BUDGET = {
   categories_budget: {},
   savings_target: { goal: 0, target_box_amount: 0, cadence: 'daily', isConfigSaved: false, saved_boxes: [] },
   checklist: [
-    { id: 1, text: 'Review today\'s purchases', checked: false },
-    { id: 2, text: 'Log all daily transactions', checked: false },
-    { id: 3, text: 'Monitor spending pace vs limit', checked: false },
-    { id: 4, text: 'Check off your savings milestone step', checked: false },
-    { id: 5, text: 'Plan next week\'s essentials', checked: false },
+    { id: 1, text: 'Review today\'s coffee & daily purchases', checked: false },
+    { id: 2, text: 'Log all transactions into ledger', checked: false },
+    { id: 3, text: 'Check money in hand vs spending limit', checked: false },
+    { id: 4, text: 'Mark off your savings milestone step', checked: false },
+    { id: 5, text: 'Plan tomorrow\'s essential budget', checked: false },
   ]
 };
 
@@ -43,7 +58,7 @@ function saveToStorage(key, value) {
   try {
     localStorage.setItem(key, JSON.stringify(value));
   } catch {
-    // Storage quota or error handling
+    // Storage quota fallback
   }
 }
 
@@ -54,10 +69,10 @@ export default function App() {
   const [userProfile, setUserProfile] = useState(() => loadFromStorage(STORAGE_KEYS.userProfile, null));
   const [warning, setWarning] = useState(null);
 
-  // Profile modal state (for editing later)
+  // Profile modal state
   const [isEditProfileModalOpen, setIsEditProfileModalOpen] = useState(false);
 
-  // Setup form states (for initial onboarding or editing)
+  // Setup form states
   const [formName, setFormName] = useState(userProfile?.name || '');
   const [formCurrency, setFormCurrency] = useState(userProfile?.currency || '₹');
   const [formIncome, setFormIncome] = useState(budgetData?.monthly_income ? String(budgetData.monthly_income) : '');
@@ -65,14 +80,14 @@ export default function App() {
 
   const currency = userProfile?.currency || '₹';
 
-  // Budget warnings
+  // Financial Analyst Budget Warnings
   const evaluateBudgetWarning = useCallback((expensesList, currentBudget, currSym) => {
     const total = round2(expensesList.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0));
     const limit = Number(currentBudget?.monthly_budget) || 0;
     if (limit > 0 && total > limit) {
-      setWarning(`Budget Exceeded: Spent ${currSym}${total.toFixed(2)} of ${currSym}${limit.toFixed(2)} (over by ${currSym}${(total - limit).toFixed(2)}).`);
+      setWarning(`Budget Warning: Total spent is ${currSym}${total.toFixed(2)} exceeding your ${currSym}${limit.toFixed(2)} limit by ${currSym}${(total - limit).toFixed(2)}.`);
     } else if (limit > 0 && total >= limit * 0.85) {
-      setWarning(`Budget Alert: ${((total / limit) * 100).toFixed(0)}% used — ${currSym}${(limit - total).toFixed(2)} remaining.`);
+      setWarning(`Cashflow Notice: ${((total / limit) * 100).toFixed(0)}% of monthly budget utilized — only ${currSym}${(limit - total).toFixed(2)} remaining.`);
     } else {
       setWarning(null);
     }
@@ -138,12 +153,12 @@ export default function App() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `harmony-expenses-${new Date().toISOString().split('T')[0]}.csv`;
+    a.download = `crema-expenses-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  // Initial Onboarding Submit
+  // Onboarding Submit
   const handleOnboardingSubmit = (e) => {
     e.preventDefault();
     const inc = parseFloat(formIncome);
@@ -175,7 +190,6 @@ export default function App() {
     saveToStorage(STORAGE_KEYS.budget, updatedBudget);
   };
 
-  // Editing profile details later
   const handleOpenEditProfile = () => {
     setFormName(userProfile?.name || '');
     setFormCurrency(userProfile?.currency || '₹');
@@ -223,17 +237,19 @@ export default function App() {
       <div className="setup-overlay">
         <div className="setup-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '14px' }}>
-            <img src={harmonyLogo} alt="Harmony" style={{ height: '48px', borderRadius: '8px' }} />
+            <div className="crema-coffee-icon-box">
+              ☕
+            </div>
             <div>
-              <h2>Welcome to Harmony</h2>
-              <div style={{ fontSize: '0.86rem', color: 'var(--growth-green)', fontWeight: '700' }}>
-                Financial Growth & Expense Tracker
+              <h2>Welcome to Crema</h2>
+              <div style={{ fontSize: '0.86rem', color: 'var(--caramel-accent)', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Cozy Personal Budget & Expense Tracker
               </div>
             </div>
           </div>
           
           <p>
-            Please set up your name and baseline financial limits to initialize your personalized growth tracker.
+            Brew your personal budget with calm clarity. Enter your name and monthly cashflow baseline to start.
           </p>
 
           <form onSubmit={handleOnboardingSubmit}>
@@ -294,7 +310,7 @@ export default function App() {
 
             <div style={{ marginTop: '24px' }}>
               <button type="submit" className="btn-primary" style={{ width: '100%', padding: '12px' }}>
-                Initialize My Tracker <ArrowRight size={18} />
+                Brew My Budget Tracker <ArrowRight size={18} />
               </button>
             </div>
           </form>
@@ -310,8 +326,8 @@ export default function App() {
         <div className="modal-backdrop" onClick={() => setIsEditProfileModalOpen(false)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
-                Edit Your Financial Baseline
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--coffee-dark)' }}>
+                Edit Financial Baseline
               </h3>
               <button
                 className="btn-icon"
@@ -393,33 +409,50 @@ export default function App() {
         </div>
       )}
 
-      {/* Main Header */}
-      <header className="app-header">
-        <div className="brand-section">
-          <img
-            src={harmonyLogo}
-            alt="Harmony Expense Tracker"
-            className="brand-logo-img"
-          />
+      {/* Header Banner (Matching Image 4) */}
+      <header className="crema-header-banner">
+        <div className="crema-brand-info">
+          <div className="crema-coffee-icon-box">
+            ☕
+          </div>
           <div>
-            <div className="brand-title">
-              Harmony
-              <span className="brand-user-greeting">
-                Hello, {userProfile.name}
-              </span>
+            <div className="crema-title">
+              Crema Tracker
             </div>
-            <p className="brand-subtitle">Financial Growth & Expense Tracker</p>
+            <div className="crema-tagline">
+              Personal Budget & Expense Tracker · Welcome, {userProfile.name}
+            </div>
           </div>
         </div>
 
-        <div className="header-actions">
+        {/* Minimalist Line Illustrations (Image 4 match) */}
+        <div className="header-illustrations">
+          <div className="header-illustration-item" title="Calendar Check">
+            <CalendarCheck size={26} strokeWidth={1.8} />
+            <span className="header-illustration-label">Log</span>
+          </div>
+          <div className="header-illustration-item" title="Card & Cashflow">
+            <CreditCard size={26} strokeWidth={1.8} />
+            <span className="header-illustration-label">Card</span>
+          </div>
+          <div className="header-illustration-item" title="Home & Needs">
+            <Home size={26} strokeWidth={1.8} />
+            <span className="header-illustration-label">Home</span>
+          </div>
+          <div className="header-illustration-item" title="Analytics & Growth">
+            <Search size={26} strokeWidth={1.8} />
+            <span className="header-illustration-label">Audits</span>
+          </div>
+        </div>
+
+        <div className="header-actions-group">
           <button
             type="button"
-            className="btn-profile-edit"
+            className="btn-baseline-edit"
             onClick={handleOpenEditProfile}
             title="Edit Baseline Details"
           >
-            <User size={14} /> {currency} Baseline
+            <User size={15} /> {currency} Baseline
           </button>
           <ClockWidget />
         </div>
@@ -443,7 +476,7 @@ export default function App() {
           className={`nav-tab-btn ${activeTab === 'budget' ? 'active' : ''}`}
           onClick={() => setActiveTab('budget')}
         >
-          <Target size={18} /> Budget & Goals
+          <Target size={18} /> Budget & Milestones
         </button>
         <button
           className={`nav-tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
