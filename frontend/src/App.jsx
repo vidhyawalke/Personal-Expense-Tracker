@@ -306,7 +306,7 @@ export default function App() {
   }
 
   return (
-    <div className="app-container">
+    <div className="app-shell">
       {/* Edit Profile Modal */}
       {isEditProfileModalOpen && (
         <div className="modal-backdrop" onClick={() => setIsEditProfileModalOpen(false)}>
@@ -395,76 +395,81 @@ export default function App() {
         </div>
       )}
 
-      {/* Header Area (Clean, Image 1 fix: Profile button, Image 2 fix: Removed 4 icons) */}
+      {/* Full-Width Header Area (From right to left, not confined to center) */}
       <header className="app-header">
-        <div className="brand-section">
-          <div className="brand-icon-square">
-            <Wallet size={24} />
-          </div>
-          <div>
-            <div className="brand-title">
-              Personal Expense Tracker
+        <div className="app-header-content">
+          <div className="brand-section">
+            <div className="brand-icon-square">
+              <Wallet size={24} />
             </div>
-            <div className="brand-subtitle">
-              Budget & Savings Management | {userProfile.name}
+            <div>
+              <div className="brand-title">
+                Personal Expense Tracker
+              </div>
+              <div className="brand-subtitle">
+                Budget & Savings Management | {userProfile.name}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="header-controls">
-          <button
-            type="button"
-            className="btn-profile"
-            onClick={handleOpenEditProfile}
-            title="Edit Profile & Baseline"
-          >
-            <User size={15} /> Profile
-          </button>
-          <ClockWidget />
+          <div className="header-controls">
+            <button
+              type="button"
+              className="btn-profile"
+              onClick={handleOpenEditProfile}
+              title="Edit Profile & Baseline"
+            >
+              <User size={15} /> Profile
+            </button>
+            <ClockWidget />
+          </div>
         </div>
       </header>
 
-      {/* Navigation (Only 2 sections: Tracker and Goal) */}
-      <nav className="nav-tabs">
-        <button
-          className={`nav-tab-btn ${activeTab === 'tracker' ? 'active' : ''}`}
-          onClick={() => setActiveTab('tracker')}
-        >
-          <Receipt size={17} /> Expense Tracker
-        </button>
-        <button
-          className={`nav-tab-btn ${activeTab === 'goal' ? 'active' : ''}`}
-          onClick={() => setActiveTab('goal')}
-        >
-          <Target size={17} /> Savings Goal
-        </button>
-      </nav>
+      {/* Main Content Area Container */}
+      <div className="app-container">
+        {/* Navigation (Only 2 sections: Tracker and Goal) */}
+        <nav className="nav-tabs">
+          <button
+            className={`nav-tab-btn ${activeTab === 'tracker' ? 'active' : ''}`}
+            onClick={() => setActiveTab('tracker')}
+          >
+            <Receipt size={17} /> Expense Tracker
+          </button>
+          <button
+            className={`nav-tab-btn ${activeTab === 'goal' ? 'active' : ''}`}
+            onClick={() => setActiveTab('goal')}
+          >
+            <Target size={17} /> Savings Goal
+          </button>
+        </nav>
 
-      {/* Content Area (Only 2 sections) */}
-      <main>
-        <div className="tab-content" key={activeTab}>
-          {activeTab === 'tracker' && (
-            <ExpenseList
-              expenses={expenses}
-              budgetData={budgetData}
-              onAddExpense={handleAddExpense}
-              onUpdateExpense={handleUpdateExpense}
-              onDeleteExpense={handleDeleteExpense}
-              onExportCSV={handleExportCSV}
-              currency={currency}
-              warning={warning}
-            />
-          )}
-          {activeTab === 'goal' && (
-            <BudgetPlanner
-              budgetData={budgetData}
-              onUpdateBudget={handleUpdateBudget}
-              expenses={expenses}
-              currency={currency}
-            />
-          )}
-        </div>
-      </main>
+        {/* Content Area (Only 2 sections) */}
+        <main>
+          <div className="tab-content" key={activeTab}>
+            {activeTab === 'tracker' && (
+              <ExpenseList
+                expenses={expenses}
+                budgetData={budgetData}
+                onAddExpense={handleAddExpense}
+                onUpdateExpense={handleUpdateExpense}
+                onDeleteExpense={handleDeleteExpense}
+                onExportCSV={handleExportCSV}
+                currency={currency}
+                warning={warning}
+              />
+            )}
+            {activeTab === 'goal' && (
+              <BudgetPlanner
+                budgetData={budgetData}
+                onUpdateBudget={handleUpdateBudget}
+                expenses={expenses}
+                currency={currency}
+              />
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
