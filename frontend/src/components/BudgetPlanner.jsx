@@ -509,7 +509,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
               </span>
             </div>
             <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '3px' }}>
-              Target: {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })} · Each block represents {currency}{activeTargetPerBlock.toLocaleString('en-US', { minimumFractionDigits: 2 })}. Click any milestone to record your deposit.
+              Target: {currency}{activeGoal.toLocaleString('en-US', { minimumFractionDigits: 2 })} | Each block represents {currency}{activeTargetPerBlock.toLocaleString('en-US', { minimumFractionDigits: 2 })}. Click any milestone to record your deposit.
             </div>
           </div>
 

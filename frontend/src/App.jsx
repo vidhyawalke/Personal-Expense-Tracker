@@ -410,7 +410,7 @@ export default function App() {
               Personal Expense Tracker
             </div>
             <div className="brand-subtitle">
-              Budget & Savings Management · {userProfile.name}
+              Budget & Savings Management | {userProfile.name}
             </div>
           </div>
         </div>

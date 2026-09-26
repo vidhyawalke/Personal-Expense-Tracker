@@ -27,11 +27,8 @@ export default function ClockWidget() {
 
   return (
     <div className="clock-widget" title="Current Local Real-Time">
-      <div className="clock-live-indicator" />
-      <div>
-        <div className="clock-time">{formattedTime}</div>
-        <div className="clock-date">{formattedDate}</div>
-      </div>
+      <div className="clock-time">{formattedTime}</div>
+      <div className="clock-date">{formattedDate}</div>
     </div>
   );
 }
