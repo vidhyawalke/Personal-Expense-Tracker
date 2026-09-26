@@ -50,7 +50,8 @@ class BudgetUpdate(BaseModel):
     monthly_income: Optional[float] = Field(None, ge=0)
     monthly_budget: Optional[float] = Field(None, ge=0)
     categories_budget: Optional[Dict[str, float]] = None
-    saved_boxes: Optional[List[int]] = None
+    savings_target: Optional[Dict[str, Any]] = None
+    saved_boxes: Optional[List[Any]] = None
     checklist: Optional[List[Dict[str, Any]]] = None
 
 @app.get("/")
@@ -142,6 +143,8 @@ def update_budget_details(payload: BudgetUpdate):
         current["monthly_budget"] = payload.monthly_budget
     if payload.categories_budget is not None:
         current["categories_budget"] = payload.categories_budget
+    if payload.savings_target is not None:
+        current["savings_target"] = payload.savings_target
     if payload.saved_boxes is not None:
         if "savings_target" not in current:
             current["savings_target"] = {"goal": 20000.0, "target_box_amount": 200.0, "saved_boxes": []}
