@@ -1,59 +1,51 @@
-# Personal Expense Tracker
+# Harmony — Personal Expense Tracker
 
 A modern personal finance, budget allocation, and milestone-based savings tracker built with React and JavaScript.
 
 ---
 
-## 🎯 Project Overview (STAR Method for Interviews)
+## What the Project Does
 
-### **Situation**
-Managing everyday expenses, tracking budget limits, and staying committed to savings targets usually requires bulky spreadsheets or invasive third-party apps that compromise financial privacy and have steep learning curves.
+Managing everyday finances without a backend, an account, or a subscription is harder than it should be. Harmony solves that by putting full financial clarity directly in the browser.
 
-### **Task**
-Create a fast, responsive, and privacy-focused client-side web application where users can log daily transactions, monitor real-time 50/30/20 budget allocations, and track scheduled savings milestones without needing a backend server or account creation.
+It lets users log and categorize daily transactions, monitor real-time 50/30/20 budget allocations, and plan structured savings milestones — all without a server, a database, or any data leaving the device.
 
-### **Action**
-- **Architecture & Performance**: Built a single-page React 19 application using Vite for instant load times and pure CSS custom properties for a consistent, accessible design system.
-- **Financial Business Logic**: Modularized financial math in pure JavaScript (`trackerLogic.js`) to handle round-safe currency calculations, budget utilization pacing, and dynamic milestone schedules.
-- **Data Portability & Integrity**: Implemented clean CSV export with sanitized integer IDs compatible with spreadsheet software (Excel, Google Sheets) and persistent client-side storage via LocalStorage.
-- **UX & Gamification**: Designed milestone savings blocks with visual progress tracking, interactive popup guides, and celebratory feedback upon goal achievements.
+The goal was to build something that feels as fast and trustworthy as a spreadsheet but far more intuitive: a single-page application that loads instantly, persists state in LocalStorage, and handles the financial math in clean, modular JavaScript.
 
-### **Result**
-Delivered an elegant, zero-latency financial tracking tool that operates 100% in the browser. Users gain immediate clarity on their spending habits and savings progress with complete data privacy and zero hosting or database maintenance costs.
+The result is a zero-latency, privacy-first finance tool where users gain immediate visibility into their spending habits and savings progress — with no hosting costs and no maintenance overhead.
 
 ---
 
-## ✨ Features
+## Why It Is Useful
 
-- **Transaction Management**: Quickly log, edit, and categorize daily expenses with live search filters and one-click CSV export.
-- **Goal Savings Milestones**: Plan savings by week, month, or year with structured milestone blocks, timeline projections, and latest-deposit markers.
-- **50/30/20 Budget Allocation**: Instant breakdown of income into essential Needs (50%), discretionary Wants (30%), and Growth Savings (20%).
-- **Interactive Guide**: Built-in information popup explaining how your milestone plan and capacity calculations work in plain English.
-- **Real-Time Clock & Custom Profile**: Live digital clock with customizable baseline income, spending limits, and currency symbols.
-- **Privacy-First Architecture**: 100% client-side state persistence using browser storage.
+Most personal finance tools either require cloud accounts (a privacy trade-off) or are too complex for day-to-day casual use. Harmony sits in between:
 
----
-
-## 🛠️ Tech Stack
-
-- **Frontend**: React 19, JavaScript (ESNext)
-- **Tooling**: Vite
-- **Styling**: Vanilla CSS3 Design Tokens
-- **Icons & Effects**: Lucide React, Canvas Confetti
-- **Storage**: Browser LocalStorage
+- No sign-up, no server, no data sent anywhere
+- Immediate feedback on budget pacing against the 50/30/20 rule
+- Milestone savings blocks with visual progress and timeline projections
+- Clean CSV export with spreadsheet-safe IDs for users who want to move data out
+- Works fully offline once loaded
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
-### 1. Install Dependencies
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) v18 or later
+- npm
+
+### Installation
+
 ```bash
-cd frontend
+# Clone the repository
+git clone https://github.com/vidhyawalke/Harmony-Expense-Tracker.git
+cd Harmony-Expense-Tracker/frontend
+
+# Install dependencies
 npm install
-```
 
-### 2. Start Local Development
-```bash
+# Start the development server
 npm run dev
 ```
 
@@ -61,24 +53,62 @@ Open `http://localhost:5173` in your browser.
 
 ---
 
-## 📁 Project Structure
+## Features
+
+- **Transaction Management** — Log, edit, and categorize expenses with live search and one-click CSV export
+- **50/30/20 Budget Allocation** — Instant income breakdown into Needs, Wants, and Savings
+- **Goal Savings Milestones** — Weekly, monthly, or yearly milestone blocks with progress tracking and deposit markers
+- **Interactive Guide** — Built-in popup explaining milestone capacity and pacing calculations
+- **Real-Time Clock and Custom Profile** — Live clock with configurable income, spending limits, and currency symbol
+- **Privacy-First** — 100% client-side; no backend, no account required
+
+---
+
+## Project Structure
 
 ```
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── BudgetPlanner.jsx   # Milestone goal planner & 50/30/20 rules
+│   │   │   ├── BudgetPlanner.jsx   # Milestone goal planner and 50/30/20 rules
 │   │   │   ├── ClockWidget.jsx     # Live real-time clock widget
-│   │   │   └── ExpenseList.jsx     # Transaction ledger & CSV export
+│   │   │   └── ExpenseList.jsx     # Transaction ledger and CSV export
 │   │   ├── utils/
 │   │   │   ├── categoryColors.js   # Category color palettes
 │   │   │   └── trackerLogic.js     # Pure JavaScript financial formulas
-│   │   ├── App.jsx                 # Workspace controller & storage
+│   │   ├── App.jsx                 # Global state and storage controller
 │   │   ├── App.css                 # Application styles
-│   │   ├── index.css               # Design system & CSS tokens
+│   │   ├── index.css               # Design system and CSS tokens
 │   │   └── main.jsx                # Application root mount
 │   ├── package.json
 │   └── vite.config.js
 ├── package.json
 └── vercel.json
 ```
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, JavaScript (ESNext) |
+| Tooling | Vite |
+| Styling | Vanilla CSS3 with custom properties |
+| Icons | Lucide React |
+| Effects | Canvas Confetti |
+| Storage | Browser LocalStorage |
+
+---
+
+## Getting Help
+
+If you run into issues or have questions, open a [GitHub Issue](https://github.com/vidhyawalke/Harmony-Expense-Tracker/issues) in this repository.
+
+---
+
+## Maintainer
+
+Built and maintained by [Vidhya Walke](https://github.com/vidhyawalke).
+
+Contributions, bug reports, and suggestions are welcome via pull request or issue.
