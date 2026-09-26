@@ -174,13 +174,14 @@
 }
 
 .nav-tab-btn:hover {
-  background: var(--bg-surface);
+  background: var(--bg-surface-hover);
   color: var(--text-main);
 }
 
 .nav-tab-btn.active {
   background: var(--primary);
   color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 /* Financial KPI Summary Cards */
@@ -215,7 +216,7 @@
 .stat-icon-income { background: #ecfdf5; color: #059669; }
 .stat-icon-budget { background: #eff6ff; color: #2563eb; }
 .stat-icon-spent { background: #fef2f2; color: #dc2626; }
-.stat-icon-remaining { background: #f8fafc; color: #0f172a; }
+.stat-icon-remaining { background: #f8fafc; color: #475569; }
 .stat-icon-savings { background: #fef3c7; color: #d97706; }
 
 .stat-label {
@@ -438,9 +439,9 @@
 
 .btn-info-icon:hover,
 .btn-info-icon.active {
-  background: var(--primary);
-  color: #ffffff;
-  border-color: var(--primary);
+  background: #e2e8f0;
+  color: #334155;
+  border-color: #94a3b8;
 }
 
 /* Info Guide Banner */

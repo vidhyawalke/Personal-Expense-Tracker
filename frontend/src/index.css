@@ -14,11 +14,11 @@
   /* Crisp Borders */
   --border-subtle:      #f1f5f9;
   --border-card:        #e2e8f0; /* Slate 200 */
-  --border-focus:       #0f172a; /* Slate 900 */
+  --border-focus:       #64748b; /* Slate 500 */
 
-  /* Primary Brand (Executive Slate Navy) */
-  --primary:            #0f172a; /* Slate 900 */
-  --primary-hover:      #1e293b; /* Slate 800 */
+  /* Primary Brand (Refined Slate Grey) */
+  --primary:            #475569; /* Slate 600 - Balanced grey */
+  --primary-hover:      #334155; /* Slate 700 - Deep grey, not black */
   --primary-light:      #f1f5f9;
   --primary-border:     #cbd5e1;
 
