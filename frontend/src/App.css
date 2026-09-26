@@ -351,6 +351,8 @@
   flex-direction: column;
   gap: 6px;
   margin-bottom: 14px;
+  min-width: 0;
+  width: 100%;
 }
 
 .form-label {
@@ -370,11 +372,122 @@
   outline: none;
   transition: border-color 0.15s ease;
   width: 100%;
+  box-sizing: border-box;
+  height: 42px;
 }
 
 .form-input:focus,
 .form-select:focus {
   border-color: var(--border-focus);
+}
+
+/* Planner Form Grid (3 columns on desktop, 2 on tablet, 1 on mobile) */
+.planner-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .planner-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .planner-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Info Icon Button (Plain English section guide) */
+.btn-info-icon {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.btn-info-icon:hover,
+.btn-info-icon.active {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+}
+
+/* Info Guide Banner */
+.info-guide-banner {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  margin-bottom: 18px;
+}
+
+.info-guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.info-guide-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  color: var(--text-main);
+}
+
+.btn-close-info {
+  background: transparent;
+  border: none;
+  font-size: 1rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.btn-close-info:hover {
+  color: var(--text-main);
+  background: var(--bg-surface-hover);
+}
+
+.info-guide-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.info-guide-list li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.info-guide-list li::before {
+  content: "•";
+  position: absolute;
+  left: 4px;
+  color: var(--accent-green);
+  font-size: 1.1rem;
+  line-height: 1;
 }
 
 /* Inline Quick-Add Expense Grid */
@@ -390,36 +503,50 @@
   margin-bottom: 18px;
 }
 
-/* Goal Cadence (Month & Year Selector) */
+/* Goal Cadence (Clean segmented control with no overflow) */
 .cadence-selector {
   display: flex;
-  gap: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  gap: 3px;
+  width: 100%;
+  box-sizing: border-box;
+  height: 42px;
+  align-items: center;
 }
 
 .cadence-btn {
-  flex: 1;
-  background: #ffffff;
-  border: 1px solid var(--border-card);
+  flex: 1 1 0;
+  min-width: 0;
+  height: 34px;
+  background: transparent;
+  border: none;
   color: var(--text-muted);
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 0.84rem;
+  padding: 0 6px;
+  border-radius: 4px;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   text-align: center;
   transition: all 0.15s ease;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cadence-btn:hover {
-  background: var(--bg-surface);
+  background: rgba(255, 255, 255, 0.6);
   color: var(--text-main);
 }
 
 .cadence-btn.active {
   background: var(--primary);
-  border-color: var(--primary);
   color: #ffffff;
   font-weight: 700;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 /* Mathematical Formula Calculation Box */

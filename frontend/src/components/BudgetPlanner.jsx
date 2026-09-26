@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Save, CheckCircle2, DollarSign, Calendar, Sparkles, Check, Clock } from 'lucide-react';
+import { TrendingUp, Save, CheckCircle2, DollarSign, Calendar, Sparkles, Check, Clock, Info } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 const round2 = (num) => Math.round((Number(num) || 0) * 100) / 100;
@@ -77,6 +77,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
 
   const [saveSuccessMsg, setSaveSuccessMsg] = useState(false);
   const [validationError, setValidationError] = useState('');
+  const [showInfo, setShowInfo] = useState(false);
 
   // Active saved configuration
   const savedBoxes = Array.isArray(savingsConfig.saved_boxes) ? savingsConfig.saved_boxes : [];
@@ -290,9 +291,18 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
       {/* Settings & Math Formulation Card */}
       <div className="finance-card">
         <div className="card-header">
-          <div className="card-title">
+          <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <TrendingUp size={20} color="var(--primary)" />
             <span>Budget & Goal Savings Setup</span>
+            <button
+              type="button"
+              className={`btn-info-icon ${showInfo ? 'active' : ''}`}
+              onClick={() => setShowInfo(!showInfo)}
+              title="How this savings section works"
+              aria-label="Section Information"
+            >
+              <Info size={15} />
+            </button>
           </div>
           {activeGoal > 0 && savingsConfig.isConfigSaved && (
             <span style={{ fontSize: '0.82rem', color: 'var(--accent-green)', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: '700' }}>
@@ -300,6 +310,32 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
             </span>
           )}
         </div>
+
+        {showInfo && (
+          <div className="info-guide-banner">
+            <div className="info-guide-header">
+              <div className="info-guide-title">
+                <Info size={16} color="var(--primary)" />
+                <strong>How this planner works</strong>
+              </div>
+              <button
+                type="button"
+                className="btn-close-info"
+                onClick={() => setShowInfo(false)}
+                aria-label="Close guide"
+              >
+                ✕
+              </button>
+            </div>
+            <ul className="info-guide-list">
+              <li>Enter monthly earnings plus your planned spending limit.</li>
+              <li>Select a target total, payment frequency, and launch date.</li>
+              <li>The tool breaks everything into organized milestone cards.</li>
+              <li>Tap any block whenever putting funds aside.</li>
+              <li>A star marks your newest deposit to record progress.</li>
+            </ul>
+          </div>
+        )}
 
         {validationError && (
           <div className="alert-banner danger" style={{ marginBottom: '16px' }}>
@@ -315,7 +351,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
         )}
 
         <form onSubmit={handleSaveConfig}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '14px' }}>
+          <div className="planner-form-grid">
             
             <div className="form-group">
               <label className="form-label">Monthly Income ({currency})</label>
