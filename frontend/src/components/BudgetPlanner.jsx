@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Save, CheckCircle2, DollarSign, Calendar, Check, Clock, Info } from 'lucide-react';
+import { TrendingUp, Save, CheckCircle2, DollarSign, Calendar, Check, Clock, Info, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 const round2 = (num) => Math.round((Number(num) || 0) * 100) / 100;
@@ -319,28 +319,43 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
         </div>
 
         {showInfo && (
-          <div className="info-guide-banner">
-            <div className="info-guide-header">
-              <div className="info-guide-title">
-                <Info size={16} color="var(--primary)" />
-                <strong>How this planner works</strong>
+          <div className="modal-backdrop" onClick={() => setShowInfo(false)}>
+            <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Info size={20} color="var(--primary)" />
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
+                    How this planner works
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  className="btn-icon"
+                  onClick={() => setShowInfo(false)}
+                  aria-label="Close"
+                >
+                  <X size={16} />
+                </button>
               </div>
-              <button
-                type="button"
-                className="btn-close-info"
-                onClick={() => setShowInfo(false)}
-                aria-label="Close guide"
-              >
-                ✕
-              </button>
+
+              <ul className="info-guide-list" style={{ margin: '0 0 22px 0', paddingLeft: '8px' }}>
+                <li>Enter monthly earnings plus your planned spending limit.</li>
+                <li>Select your target amount, how often to save, and start date.</li>
+                <li>The tool breaks everything into organized milestone cards.</li>
+                <li>Tap any block whenever putting funds aside.</li>
+                <li>Your newest deposit is marked so you can track progress.</li>
+              </ul>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={() => setShowInfo(false)}
+                >
+                  Got it
+                </button>
+              </div>
             </div>
-            <ul className="info-guide-list">
-              <li>Enter monthly earnings plus your planned spending limit.</li>
-              <li>Select your target amount, how often to save, and start date.</li>
-              <li>The tool breaks everything into organized milestone cards.</li>
-              <li>Tap any block whenever putting funds aside.</li>
-              <li>A star marks your newest deposit to record progress.</li>
-            </ul>
           </div>
         )}
 
