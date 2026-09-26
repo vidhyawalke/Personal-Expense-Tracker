@@ -336,7 +336,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
             </div>
             <ul className="info-guide-list">
               <li>Enter monthly earnings plus your planned spending limit.</li>
-              <li>Select a target total, payment frequency, and launch date.</li>
+              <li>Select your target amount, how often to save, and start date.</li>
               <li>The tool breaks everything into organized milestone cards.</li>
               <li>Tap any block whenever putting funds aside.</li>
               <li>A star marks your newest deposit to record progress.</li>
@@ -400,7 +400,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
             </div>
 
             <div className="form-group">
-              <label className="form-label">Savings Cadence</label>
+              <label className="form-label">How Often to Save</label>
               <div className="cadence-selector">
                 <button
                   type="button"
