@@ -235,7 +235,7 @@ export default function App() {
           </div>
           
           <p>
-            Please set your baseline parameters to initialize your personal budget and savings ledger.
+            Enter your details below to start tracking your daily expenses and savings.
           </p>
 
           <form onSubmit={handleOnboardingSubmit}>
@@ -296,7 +296,7 @@ export default function App() {
 
             <div style={{ marginTop: '24px' }}>
               <button type="submit" className="btn-primary" style={{ width: '100%', padding: '12px' }}>
-                Open Financial Workspace <ArrowRight size={18} />
+                Get Started <ArrowRight size={18} />
               </button>
             </div>
           </form>
@@ -313,7 +313,7 @@ export default function App() {
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)' }}>
-                Edit Profile & Baseline
+                Edit Profile & Settings
               </h3>
               <button
                 className="btn-icon"
@@ -417,7 +417,7 @@ export default function App() {
               type="button"
               className="btn-profile"
               onClick={handleOpenEditProfile}
-              title="Edit Profile & Baseline"
+              title="Edit Profile & Settings"
             >
               <User size={15} /> Profile
             </button>
