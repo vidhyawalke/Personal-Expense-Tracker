@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Save, CheckCircle2, DollarSign, Calendar, Check, Clock, Info, X } from 'lucide-react';
+import { TrendingUp, Save, CheckCircle2, DollarSign, Calendar, Check, Clock, Info } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 const round2 = (num) => Math.round((Number(num) || 0) * 100) / 100;
@@ -321,21 +321,11 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
         {showInfo && (
           <div className="modal-backdrop" onClick={() => setShowInfo(false)}>
             <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Info size={20} color="var(--primary)" />
-                  <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
-                    How this planner works
-                  </h3>
-                </div>
-                <button
-                  type="button"
-                  className="btn-icon"
-                  onClick={() => setShowInfo(false)}
-                  aria-label="Close"
-                >
-                  <X size={16} />
-                </button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '18px' }}>
+                <Info size={20} color="var(--primary)" />
+                <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)', margin: 0 }}>
+                  How this planner works
+                </h3>
               </div>
 
               <ul className="info-guide-list" style={{ margin: '0 0 22px 0', paddingLeft: '8px' }}>
