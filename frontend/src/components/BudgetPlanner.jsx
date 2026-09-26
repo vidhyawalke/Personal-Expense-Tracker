@@ -208,7 +208,14 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
 
   const actualOther = round2(totalSpent - (actualNeeds + actualWants));
   const totalWantsWithOther = round2(actualWants + (actualOther > 0 ? actualOther : 0));
-  const actualSavings = round2(Math.max(0, parsedIncome - totalSpent));
+  
+  const needsPercent = needsTarget > 0 ? Math.min(100, Math.round((actualNeeds / needsTarget) * 100)) : 0;
+  const wantsPercent = wantsTarget > 0 ? Math.min(100, Math.round((totalWantsWithOther / wantsTarget) * 100)) : 0;
+
+  // Unspent monthly surplus available for savings
+  const remainingSurplus = Math.max(0, round2(parsedIncome - totalSpent));
+  const savingsAllocated = Math.min(savingsTarget, remainingSurplus);
+  const savingsPercent = savingsTarget > 0 ? Math.min(100, Math.round((savingsAllocated / savingsTarget) * 100)) : 0;
 
   const handleSaveConfig = (e) => {
     e.preventDefault();
@@ -668,87 +675,129 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
           <div className="card-header">
             <div>
               <div className="card-title">
-                <TrendingUp size={20} color="var(--primary)" />
-                <span>50 / 30 / 20 Budget Allocation</span>
+                <span>50 / 30 / 20 Budget Guide</span>
               </div>
-              <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '2px' }}>
-                Benchmark based on {currency}{parsedIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })} monthly income.
+              <div style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                Recommended monthly split for {currency}{parsedIncome.toLocaleString('en-US', { minimumFractionDigits: 2 })} income
               </div>
             </div>
           </div>
 
+          {/* Tri-color allocation split bar */}
+          <div className="rule-split-bar" title="50% Needs / 30% Wants / 20% Savings">
+            <div className="rule-split-segment needs" />
+            <div className="rule-split-segment wants" />
+            <div className="rule-split-segment savings" />
+          </div>
+
           <div className="rule-grid">
-            <div className="rule-box needs">
+            {/* Needs 50% */}
+            <div className="rule-box">
               <div>
-                <div className="rule-percentage">50%</div>
-                <div className="rule-title">Needs</div>
-                <div className="rule-desc">Essential living expenses: Rent, groceries, bills, healthcare.</div>
+                <div className="rule-box-header">
+                  <span className="rule-title">Needs</span>
+                  <span className="rule-badge needs">50%</span>
+                </div>
+                <div className="rule-desc">
+                  Rent, groceries, utilities, and essential bills
+                </div>
               </div>
+
               <div>
-                <div className="rule-target-amount">
-                  Target: {currency}{needsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                <div className="rule-amount-block">
+                  <span className="rule-amount-label">Target Limit</span>
+                  <span className="rule-amount-value">
+                    {currency}{needsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  Spent: {currency}{actualNeeds.toFixed(2)} ({needsTarget > 0 ? ((actualNeeds / needsTarget) * 100).toFixed(0) : 0}%)
-                </div>
-                <div className="progress-bar-bg">
+
+                <div className="progress-bar-bg" style={{ height: '6px', margin: '10px 0 6px 0' }}>
                   <div
                     className="progress-bar-fill"
                     style={{
-                      width: `${Math.min(100, needsTarget > 0 ? (actualNeeds / needsTarget) * 100 : 0)}%`,
-                      background: 'var(--cat-housing)'
+                      width: `${needsPercent}%`,
+                      background: '#2563eb'
                     }}
                   />
+                </div>
+
+                <div className="rule-status-row">
+                  <span>Spent: <strong className="rule-status-val">{currency}{actualNeeds.toFixed(2)}</strong> ({needsPercent}%)</span>
+                  <span>{currency}{Math.max(0, needsTarget - actualNeeds).toFixed(2)} left</span>
                 </div>
               </div>
             </div>
 
-            <div className="rule-box wants">
+            {/* Wants 30% */}
+            <div className="rule-box">
               <div>
-                <div className="rule-percentage">30%</div>
-                <div className="rule-title">Wants</div>
-                <div className="rule-desc">Discretionary spending: Dining out, leisure, shopping, subscriptions.</div>
+                <div className="rule-box-header">
+                  <span className="rule-title">Wants</span>
+                  <span className="rule-badge wants">30%</span>
+                </div>
+                <div className="rule-desc">
+                  Dining out, entertainment, hobbies, and shopping
+                </div>
               </div>
+
               <div>
-                <div className="rule-target-amount">
-                  Target: {currency}{wantsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                <div className="rule-amount-block">
+                  <span className="rule-amount-label">Target Limit</span>
+                  <span className="rule-amount-value">
+                    {currency}{wantsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  Spent: {currency}{totalWantsWithOther.toFixed(2)} ({wantsTarget > 0 ? ((totalWantsWithOther / wantsTarget) * 100).toFixed(0) : 0}%)
-                </div>
-                <div className="progress-bar-bg">
+
+                <div className="progress-bar-bg" style={{ height: '6px', margin: '10px 0 6px 0' }}>
                   <div
                     className="progress-bar-fill"
                     style={{
-                      width: `${Math.min(100, wantsTarget > 0 ? (totalWantsWithOther / wantsTarget) * 100 : 0)}%`,
-                      background: 'var(--cat-food)'
+                      width: `${wantsPercent}%`,
+                      background: '#ea580c'
                     }}
                   />
+                </div>
+
+                <div className="rule-status-row">
+                  <span>Spent: <strong className="rule-status-val">{currency}{totalWantsWithOther.toFixed(2)}</strong> ({wantsPercent}%)</span>
+                  <span>{currency}{Math.max(0, wantsTarget - totalWantsWithOther).toFixed(2)} left</span>
                 </div>
               </div>
             </div>
 
-            <div className="rule-box savings">
+            {/* Savings 20% */}
+            <div className="rule-box">
               <div>
-                <div className="rule-percentage">20%</div>
-                <div className="rule-title">Savings & Growth</div>
-                <div className="rule-desc">Emergency funds, long-term capital, investments.</div>
+                <div className="rule-box-header">
+                  <span className="rule-title">Savings & Growth</span>
+                  <span className="rule-badge savings">20%</span>
+                </div>
+                <div className="rule-desc">
+                  Emergency funds, deposits, and future investments
+                </div>
               </div>
+
               <div>
-                <div className="rule-target-amount">
-                  Target: {currency}{savingsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                <div className="rule-amount-block">
+                  <span className="rule-amount-label">Monthly Target</span>
+                  <span className="rule-amount-value">
+                    {currency}{savingsTarget.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </span>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                  Retained: {currency}{actualSavings.toFixed(2)} ({savingsTarget > 0 ? ((actualSavings / savingsTarget) * 100).toFixed(0) : 0}%)
-                </div>
-                <div className="progress-bar-bg">
+
+                <div className="progress-bar-bg" style={{ height: '6px', margin: '10px 0 6px 0' }}>
                   <div
                     className="progress-bar-fill"
                     style={{
-                      width: `${Math.min(100, savingsTarget > 0 ? (actualSavings / savingsTarget) * 100 : 0)}%`,
-                      background: 'var(--accent-green)'
+                      width: `${savingsPercent}%`,
+                      background: '#059669'
                     }}
                   />
+                </div>
+
+                <div className="rule-status-row">
+                  <span>Covered: <strong className="rule-status-val">{currency}{savingsAllocated.toFixed(2)}</strong> ({savingsPercent}%)</span>
+                  <span>{savingsPercent >= 100 ? 'Goal covered' : `${currency}${(savingsTarget - savingsAllocated).toFixed(2)} to go`}</span>
                 </div>
               </div>
             </div>
