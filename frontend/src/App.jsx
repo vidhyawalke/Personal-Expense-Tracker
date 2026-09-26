@@ -33,7 +33,7 @@ const DEFAULT_BUDGET = {
   ]
 };
 
-const round2 = (val) => Math.round((Number(val) || 0) * 100) / 100;
+import { round2, exportExpensesToCSV } from './utils/trackerLogic';
 
 function loadFromStorage(key, fallback) {
   try {
@@ -134,11 +134,7 @@ export default function App() {
       alert('No expenses to download.');
       return;
     }
-    const header = 'ID,Date,Description,Category,Amount';
-    const rows = expenses.map(e =>
-      `${e.id},${e.date},"${e.description}",${e.category || 'Other'},${Number(e.amount).toFixed(2)}`
-    );
-    const csv = [header, ...rows].join('\n');
+    const csv = exportExpensesToCSV(expenses);
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');

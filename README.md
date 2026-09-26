@@ -1,37 +1,56 @@
-# Harmony Expense Tracker
+# Personal Expense Tracker
 
-A clean, modern personal finance and savings tracker with milestone-based goal planning.
+A modern personal finance, budget allocation, and milestone-based savings tracker built with React and JavaScript.
 
 ## Features
 
-- **Expense Tracking**: Fast transaction logging, category filtering, search, and CSV export.
-- **Goal & Milestone Planner**: Plan savings weekly, monthly, or yearly with exact start/end dates, milestone blocks, and last-saved tracking.
-- **50/30/20 Budgeting**: Automatic allocation analysis based on your monthly income.
-- **Profile & Live Clock**: Customizable currency, spending limits, and real-time clock widget.
+- **Transaction Management**: Quickly log, edit, and organize daily expenses by category with instant search and CSV export.
+- **Goal Savings Milestones**: Plan savings by week, month, or year with scheduled milestone blocks, start and end dates, and automated tracking of your latest deposit.
+- **50/30/20 Budget Allocation**: Real-time breakdown of essential Needs (50%), discretionary Wants (30%), and Growth Savings (20%).
+- **Interactive Guide**: Built-in information tool explaining how your milestone plan and capacity calculations work in plain English.
+- **Real-Time Clock & Custom Profile**: Live digital clock with customizable baseline income, spending limits, and currency.
+- **Zero Server Setup**: Fully client-side state persistence using browser storage.
 
-## Quick Start
+## Getting Started
 
-### 1. Backend (FastAPI)
-```bash
-pip install -r requirements.txt
-python run_app.py
-```
-Or start uvicorn directly:
-```bash
-uvicorn backend.server:app --reload --port 8000
-```
-
-### 2. Frontend (React + Vite)
+### 1. Install Dependencies
 ```bash
 cd frontend
 npm install
+```
+
+### 2. Start Local Development
+```bash
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`.
+Open `http://localhost:5173` in your browser.
+
+## Project Structure
+
+```
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── BudgetPlanner.jsx   # Milestone goal planner & 50/30/20 rules
+│   │   │   ├── ClockWidget.jsx     # Live real-time clock widget
+│   │   │   └── ExpenseList.jsx     # Transaction ledger & CSV export
+│   │   ├── utils/
+│   │   │   ├── categoryColors.js   # Category color palettes
+│   │   │   └── trackerLogic.js     # Pure JavaScript financial formulas
+│   │   ├── App.jsx                 # Workspace controller & storage
+│   │   ├── App.css                 # Application styles
+│   │   ├── index.css               # Design system & CSS tokens
+│   │   └── main.jsx                # Application root mount
+│   ├── package.json
+│   └── vite.config.js
+├── package.json
+└── vercel.json
+```
 
 ## Tech Stack
 
-- **Frontend**: React 19, Vite, Vanilla CSS, Lucide Icons, Canvas Confetti
-- **Backend**: Python, FastAPI, Uvicorn, Pydantic
-- **Storage**: JSON file persistence with atomic writes
+- **Framework**: React 19, Vite
+- **Styling**: Vanilla CSS3 Design System with frosted glass aesthetics
+- **Icons & Effects**: Lucide React, Canvas Confetti
+- **Storage**: Browser LocalStorage

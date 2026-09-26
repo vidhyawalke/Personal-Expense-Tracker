@@ -1,0 +1,12 @@
+{
+  "name": "harmony-expense-tracker",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Personal Expense Tracker and Savings Goal Planner in Pure JavaScript",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "lint": "npm --prefix frontend run lint",
+    "preview": "npm --prefix frontend run preview"
+  }
+}
