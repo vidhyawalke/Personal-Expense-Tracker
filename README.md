@@ -14,9 +14,7 @@ The result is a zero-latency, privacy-first finance tool where users gain immedi
 
 ## Why It Is Useful
 
-Most personal finance tools either require cloud accounts (a privacy trade-off) or are too complex for day-to-day casual use. This sits in between:
-
-No sign-up, no server, no data sent anywhere. Immediate feedback on budget pacing against the 50/30/20 rule. Milestone savings blocks with visual progress and timeline projections. Clean CSV export with spreadsheet-safe IDs. Works fully offline once loaded.
+Most personal finance tools demand a cloud account, a monthly subscription, or both. This project takes a different approach — everything runs in the browser, with no sign-up and no data sent to any server. It gives users immediate feedback on how their spending aligns with the 50/30/20 rule, tracks savings progress through structured milestone blocks, and lets them export their data to a clean CSV at any time. It also works fully offline once the page has loaded.
 
 ## Getting Started
 
