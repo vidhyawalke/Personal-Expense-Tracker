@@ -511,13 +511,8 @@
 .quick-add-grid {
   display: grid;
   grid-template-columns: 2fr 1fr 1.3fr 1.1fr auto;
-  gap: 12px;
+  gap: 14px;
   align-items: flex-end;
-  background: var(--bg-surface);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  margin-bottom: 18px;
 }
 
 /* Cadence toggle selector */

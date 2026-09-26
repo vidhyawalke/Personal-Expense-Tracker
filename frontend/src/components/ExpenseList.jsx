@@ -232,11 +232,10 @@ export default function ExpenseList({
       <div className="finance-card">
         <div className="card-header">
           <div className="card-title">
-            <Plus size={18} color="var(--primary)" />
             <span>Add Expense</span>
           </div>
           <span style={{ fontSize: '0.84rem', color: 'var(--text-muted)' }}>
-            Record an expenditure into your ledger
+            Quickly log a new expense
           </span>
         </div>
 
@@ -250,7 +249,7 @@ export default function ExpenseList({
         {quickSuccess && (
           <div className="alert-banner success" style={{ marginBottom: '14px' }}>
             <CheckCircle2 size={18} />
-            <span>Expense recorded in your ledger!</span>
+            <span>Expense recorded successfully!</span>
           </div>
         )}
 
@@ -305,8 +304,8 @@ export default function ExpenseList({
               />
             </div>
 
-            <button type="submit" className="btn-primary" style={{ height: '40px' }}>
-              <Plus size={16} /> Add
+            <button type="submit" className="btn-primary" style={{ height: '42px' }}>
+              Add
             </button>
           </div>
         </form>
