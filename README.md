@@ -4,17 +4,20 @@ A personal finance, budget allocation, and milestone-based savings tracker built
 
 ## What the Project Does
 
-Managing everyday finances without a backend, an account, or a subscription is harder than it should be. This project solves that by putting full financial clarity directly in the browser.
+Personal Expense Tracker is a web application that helps you manage your daily spending, plan a budget, and set savings goals.
 
-It lets users log and categorize daily transactions, monitor real-time 50/30/20 budget allocations, and plan structured savings milestones — all without a server, a database, or any data leaving the device.
+You can add expenses, assign them a category, and see a breakdown of where your money is going. The app follows the 50/30/20 rule to split your income into needs, wants, and savings. You can also create savings milestones and track how close you are to reaching each one.
 
-The goal was to build something that feels as fast and trustworthy as a spreadsheet but far more intuitive: a single-page application that loads instantly, persists state in LocalStorage, and handles the financial math in clean, modular JavaScript.
-
-The result is a zero-latency, privacy-first finance tool where users gain immediate visibility into their spending habits and savings progress — with no hosting costs and no maintenance overhead.
+All data is stored in your browser. Nothing is sent to any server and no account is needed to use it.
 
 ## Why It Is Useful
 
-Most personal finance tools demand a cloud account, a monthly subscription, or both. This project takes a different approach — everything runs in the browser, with no sign-up and no data sent to any server. It gives users immediate feedback on how their spending aligns with the 50/30/20 rule, tracks savings progress through structured milestone blocks, and lets them export their data to a clean CSV at any time. It also works fully offline once the page has loaded.
+1. No account or sign-up is required to use it.
+2. Your data stays only in your browser and is never shared with anyone.
+3. You can see how your spending compares to the 50/30/20 budget rule.
+4. You can set savings goals and check your progress over time.
+5. You can download your expenses as a CSV file to open in Excel or Google Sheets.
+6. The app works without an internet connection after the page has loaded.
 
 ## Getting Started
 
