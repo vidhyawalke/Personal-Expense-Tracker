@@ -4,11 +4,13 @@ A personal finance, budget allocation, and milestone-based savings tracker built
 
 ## What the Project Does
 
-Personal Expense Tracker is a web application that helps you manage your daily spending, plan a budget, and set savings goals.
+Tracking personal expenses without a proper tool often means maintaining scattered notes or complex spreadsheets, which are hard to keep up with over time.
 
-You can add expenses, assign them a category, and see a breakdown of where your money is going. The app follows the 50/30/20 rule to split your income into needs, wants, and savings. You can also create savings milestones and track how close you are to reaching each one.
+The goal was to build a simple web application where a person can log daily expenses, follow a structured budget, and plan savings without relying on any external service or account.
 
-All data is stored in your browser. Nothing is sent to any server and no account is needed to use it.
+The app was built using React and JavaScript. It lets users add and categorize transactions, apply the 50/30/20 budget rule to their income, and create savings milestones. All data is saved in the browser itself using local storage.
+
+Users get a clear view of their spending, stay within their budget limits, and track savings progress, all without sharing any data with a server.
 
 ## Why It Is Useful
 
