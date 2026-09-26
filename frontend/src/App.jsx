@@ -54,7 +54,15 @@ function saveToStorage(key, value) {
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('tracker');
-  const [expenses, setExpenses] = useState(() => loadFromStorage(STORAGE_KEYS.expenses, []));
+  const [expenses, setExpenses] = useState(() => {
+    const loaded = loadFromStorage(STORAGE_KEYS.expenses, []);
+    if (Array.isArray(loaded) && loaded.some(e => typeof e.id === 'number' && e.id > 10000000)) {
+      const normalized = [...loaded].reverse().map((e, idx) => ({ ...e, id: idx + 1 })).reverse();
+      saveToStorage(STORAGE_KEYS.expenses, normalized);
+      return normalized;
+    }
+    return loaded;
+  });
   const [budgetData, setBudgetData] = useState(() => loadFromStorage(STORAGE_KEYS.budget, DEFAULT_BUDGET));
   const [userProfile, setUserProfile] = useState(() => loadFromStorage(STORAGE_KEYS.userProfile, null));
   const [warning, setWarning] = useState(null);
@@ -88,8 +96,10 @@ export default function App() {
   }, [expenses, budgetData, currency, evaluateBudgetWarning]);
 
   const handleAddExpense = (newExpense) => {
-    const id = Date.now();
-    const entry = { id, ...newExpense, amount: round2(newExpense.amount) };
+    const nextId = expenses.length > 0
+      ? Math.max(0, ...expenses.map(e => (typeof e.id === 'number' && e.id < 10000000 ? e.id : 0))) + 1
+      : 1;
+    const entry = { id: nextId, ...newExpense, amount: round2(newExpense.amount) };
     const updated = [entry, ...expenses];
     setExpenses(updated);
     saveToStorage(STORAGE_KEYS.expenses, updated);

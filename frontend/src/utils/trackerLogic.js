@@ -23,8 +23,12 @@ export function addExpense(expensesList, { description, amount, category = 'Othe
   const numAmount = round2(amount);
   if (isNaN(numAmount) || numAmount <= 0) throw new Error('Amount must be greater than zero.');
 
+  const nextId = expensesList.length > 0
+    ? Math.max(0, ...expensesList.map((e) => (typeof e.id === 'number' && e.id < 10000000 ? e.id : 0))) + 1
+    : 1;
+
   const entry = {
-    id: Date.now(),
+    id: nextId,
     description: cleanedDesc,
     amount: numAmount,
     category: category || 'Other',
@@ -129,8 +133,9 @@ export function calculate503020Rule(expensesList, monthlyIncome = 0) {
 
 export function exportExpensesToCSV(expensesList) {
   const header = 'ID,Date,Description,Category,Amount';
-  const rows = expensesList.map((e) =>
-    `${e.id},${e.date},"${(e.description || '').replace(/"/g, '""')}",${e.category || 'Other'},${Number(e.amount).toFixed(2)}`
-  );
+  const rows = expensesList.map((e, index) => {
+    const id = (typeof e.id === 'number' && e.id < 10000000 && e.id > 0) ? e.id : (index + 1);
+    return `${id},${e.date},"${(e.description || '').replace(/"/g, '""')}",${e.category || 'Other'},${Number(e.amount).toFixed(2)}`;
+  });
   return [header, ...rows].join('\n');
 }
