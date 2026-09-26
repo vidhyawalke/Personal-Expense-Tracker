@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Save, CheckCircle2, DollarSign, Calendar, Sparkles, Check, Clock, Info } from 'lucide-react';
+import { TrendingUp, Save, CheckCircle2, DollarSign, Calendar, Check, Clock, Info } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 const round2 = (num) => Math.round((Number(num) || 0) * 100) / 100;
@@ -510,7 +510,6 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
         <div className="card-header">
           <div>
             <div className="card-title">
-              <Sparkles size={20} color="var(--primary)" />
               <span>
                 Goal Savings Milestones ({activeCadence === 'week' ? `${activeDuration} Week Plan` : activeCadence === 'year' ? `${activeDuration} Year Plan (${activeTotalUnits} Months)` : `${activeDuration} Month Plan`})
               </span>
@@ -564,7 +563,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
             <div className="milestone-summary-card">
               <div className="milestone-summary-label">Next Up</div>
               <div className="milestone-summary-val">
-                {nextPendingBlockNum ? `Block ${nextPendingBlockNum} (${currency}${activeTargetPerBlock.toFixed(0)})` : '🎉 All Saved!'}
+                {nextPendingBlockNum ? `Block ${nextPendingBlockNum} (${currency}${activeTargetPerBlock.toFixed(0)})` : 'All Saved!'}
               </div>
               <div className="milestone-summary-sub">
                 {nextPendingBlockNum 
@@ -611,7 +610,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
                   <div className="milestone-card-top">
                     <span className="milestone-period-title">{dates.label}</span>
                     {isLastAdded ? (
-                      <span className="milestone-pill last-saved">⭐ Last Added</span>
+                      <span className="milestone-pill last-saved">Last Added</span>
                     ) : isSaved ? (
                       <span className="milestone-pill saved">✓ Done</span>
                     ) : (
