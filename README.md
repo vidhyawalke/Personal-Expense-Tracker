@@ -16,18 +16,13 @@ The result is a zero-latency, privacy-first finance tool where users gain immedi
 
 Most personal finance tools either require cloud accounts (a privacy trade-off) or are too complex for day-to-day casual use. This sits in between:
 
-- No sign-up, no server, no data sent anywhere
-- Immediate feedback on budget pacing against the 50/30/20 rule
-- Milestone savings blocks with visual progress and timeline projections
-- Clean CSV export with spreadsheet-safe IDs for users who want to move data out
-- Works fully offline once loaded
+No sign-up, no server, no data sent anywhere. Immediate feedback on budget pacing against the 50/30/20 rule. Milestone savings blocks with visual progress and timeline projections. Clean CSV export with spreadsheet-safe IDs. Works fully offline once loaded.
 
 ## Getting Started
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/) v18 or later
-- npm
+[Node.js](https://nodejs.org/) v18 or later and npm.
 
 ### Installation
 
@@ -42,12 +37,17 @@ Open `http://localhost:5173` in your browser.
 
 ## Features
 
-- Transaction Management — Log, edit, and categorize expenses with live search and one-click CSV export
-- 50/30/20 Budget Allocation — Instant income breakdown into Needs, Wants, and Savings
-- Goal Savings Milestones — Weekly, monthly, or yearly milestone blocks with progress tracking and deposit markers
-- Interactive Guide — Built-in popup explaining milestone capacity and pacing calculations
-- Real-Time Clock and Custom Profile — Live clock with configurable income, spending limits, and currency symbol
-- Privacy-First — 100% client-side; no backend, no account required
+Transaction Management — Log, edit, and categorize expenses with live search and one-click CSV export
+
+50/30/20 Budget Allocation — Instant income breakdown into Needs, Wants, and Savings
+
+Goal Savings Milestones — Weekly, monthly, or yearly milestone blocks with progress tracking and deposit markers
+
+Interactive Guide — Built-in popup explaining milestone capacity and pacing calculations
+
+Real-Time Clock and Custom Profile — Live clock with configurable income, spending limits, and currency symbol
+
+Privacy-First — 100% client-side; no backend, no account required
 
 ## Project Structure
 
