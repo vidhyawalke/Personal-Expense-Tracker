@@ -4,12 +4,7 @@
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* =========================================================
-     PROFESSIONAL PERSONAL FINANCE DESIGN SYSTEM
-     Clean, solid, executive, zero gimmicks
-     ========================================================= */
-
-  /* Neutral Slate Surface */
+  /* Theme color and surface tokens */
   --bg-app:             #f8fafc; /* Slate 50 */
   --bg-card:            #ffffff; /* Pure white */
   --bg-surface:         #f1f5f9; /* Slate 100 */
@@ -39,7 +34,7 @@
   --text-muted:         #64748b; /* Slate 500 */
   --text-light:         #94a3b8; /* Slate 400 */
 
-  /* Universal Color Theory — Categories */
+  /* Category colors */
   --cat-food:           #ea580c; /* Orange */
   --cat-housing:        #2563eb; /* Blue */
   --cat-transport:      #0891b2; /* Cyan */

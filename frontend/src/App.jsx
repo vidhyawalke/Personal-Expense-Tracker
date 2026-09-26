@@ -70,7 +70,7 @@ export default function App() {
 
   const currency = userProfile?.currency || '₹';
 
-  // Mathematical Budget Warnings
+  // Evaluate spending pace against monthly budget limit
   const evaluateBudgetWarning = useCallback((expensesList, currentBudget, currSym) => {
     const total = round2(expensesList.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0));
     const limit = Number(currentBudget?.monthly_budget) || 0;
@@ -144,7 +144,7 @@ export default function App() {
     URL.revokeObjectURL(url);
   };
 
-  // Onboarding Submit
+  // Onboarding form submit handler
   const handleOnboardingSubmit = (e) => {
     e.preventDefault();
     const inc = parseFloat(formIncome);
@@ -217,7 +217,7 @@ export default function App() {
     setIsEditProfileModalOpen(false);
   };
 
-  // Onboarding Setup
+  // Initial user onboarding screen
   if (!userProfile?.name) {
     return (
       <div className="setup-overlay">
@@ -395,7 +395,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Full-Width Header Area (From right to left, not confined to center) */}
+      {/* Header */}
       <header className="app-header">
         <div className="app-header-content">
           <div className="brand-section">
@@ -426,9 +426,9 @@ export default function App() {
         </div>
       </header>
 
-      {/* Main Content Area Container */}
+      {/* Content Container */}
       <div className="app-container">
-        {/* Navigation (Only 2 sections: Tracker and Goal) */}
+        {/* Tab Navigation */}
         <nav className="nav-tabs">
           <button
             className={`nav-tab-btn ${activeTab === 'tracker' ? 'active' : ''}`}
@@ -444,7 +444,7 @@ export default function App() {
           </button>
         </nav>
 
-        {/* Content Area (Only 2 sections) */}
+        {/* Tab Views */}
         <main>
           <div className="tab-content" key={activeTab}>
             {activeTab === 'tracker' && (

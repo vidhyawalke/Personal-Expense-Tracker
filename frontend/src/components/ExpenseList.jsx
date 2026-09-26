@@ -30,7 +30,7 @@ export default function ExpenseList({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   
-  // Inline quick-add form state
+  // Quick add form state
   const [quickDesc, setQuickDesc] = useState('');
   const [quickAmount, setQuickAmount] = useState('');
   const [quickCategory, setQuickCategory] = useState('Food & Dining');
@@ -38,17 +38,17 @@ export default function ExpenseList({
   const [quickError, setQuickError] = useState('');
   const [quickSuccess, setQuickSuccess] = useState(false);
 
-  // Edit Modal State
+  // Edit modal state
   const [editingExpense, setEditingExpense] = useState(null);
   const [editDesc, setEditDesc] = useState('');
   const [editAmount, setEditAmount] = useState('');
   const [editCategory, setEditCategory] = useState('Food & Dining');
   const [editDate, setEditDate] = useState('');
 
-  // Delete Confirm
+  // Delete confirmation modal state
   const [deleteConfirmId, setDeleteConfirmId] = useState(null);
 
-  // Filtered List
+  // Filtered expense entries based on search and category
   const filteredExpenses = expenses.filter(exp => {
     const s = searchTerm.toLowerCase().trim();
     const matchesSearch = !s ||
@@ -60,7 +60,7 @@ export default function ExpenseList({
 
   const totalFiltered = round2(filteredExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0));
 
-  // Excel / Notion Financial Metrics
+  // Monthly budget totals and cash flow metrics
   const totalSpent = round2(expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0));
   const income = Number(budgetData?.monthly_income) || 0;
   const budget = Number(budgetData?.monthly_budget) || 0;
@@ -68,7 +68,7 @@ export default function ExpenseList({
   const netCashflow = round2(income - totalSpent);
   const budgetUsedPercent = budget > 0 ? Math.min(100, Math.round((totalSpent / budget) * 100)) : 0;
 
-  // Quick Add Form Handler
+  // Quick add submit handler
   const handleQuickAdd = (e) => {
     e.preventDefault();
     setQuickError('');
@@ -143,7 +143,7 @@ export default function ExpenseList({
         </div>
       )}
 
-      {/* Notion / Excel Summary Metrics Row */}
+      {/* Overview metric cards */}
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon-wrapper stat-icon-income">
@@ -228,7 +228,7 @@ export default function ExpenseList({
         </div>
       )}
 
-      {/* Inline Quick-Add Card */}
+      {/* Expense entry form */}
       <div className="finance-card">
         <div className="card-header">
           <div className="card-title">
@@ -312,7 +312,7 @@ export default function ExpenseList({
         </form>
       </div>
 
-      {/* Expenses Ledger Card */}
+      {/* Expense ledger */}
       <div className="finance-card">
         <div className="card-header">
           <div>
@@ -331,7 +331,7 @@ export default function ExpenseList({
           </div>
         </div>
 
-        {/* Filter & Search Bar */}
+        {/* Search and category filter */}
         <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '18px' }}>
           <div style={{ position: 'relative', flex: 1, minWidth: '220px' }}>
             <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
@@ -359,7 +359,7 @@ export default function ExpenseList({
           </select>
         </div>
 
-        {/* Table of expenses */}
+        {/* Expense records table */}
         {filteredExpenses.length === 0 ? (
           <div className="empty-state">
             <p>No transactions found matching your criteria.</p>
@@ -443,7 +443,7 @@ export default function ExpenseList({
         )}
       </div>
 
-      {/* Edit Expense Modal */}
+      {/* Edit expense modal */}
       {editingExpense && (
         <div className="modal-backdrop" onClick={() => setEditingExpense(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>
@@ -523,7 +523,7 @@ export default function ExpenseList({
         </div>
       )}
 
-      {/* Delete Confirmation Modal */}
+      {/* Delete confirmation modal */}
       {deleteConfirmId !== null && (
         <div className="modal-backdrop" onClick={() => setDeleteConfirmId(null)}>
           <div className="modal-card" onClick={(e) => e.stopPropagation()}>

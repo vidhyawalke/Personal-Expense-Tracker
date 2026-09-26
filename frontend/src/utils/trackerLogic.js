@@ -1,6 +1,6 @@
 /**
- * Pure JavaScript Finance & Tracker Business Logic
- * Replaces legacy Python backend/tracker_logic.py
+ * Core financial calculations and transaction state helpers.
+ * Includes budget summaries, 50/30/20 allocation, and CSV export.
  */
 
 export const STANDARD_CATEGORIES = [

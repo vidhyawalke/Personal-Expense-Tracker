@@ -1,4 +1,4 @@
-// Universal Color Theory — Financial Categories
+// Category color definitions for badges and charts
 export const CATEGORY_COLORS = {
   'Food & Dining':       { color: '#e07a5f', bg: '#fdf1ed', label: 'Food & Dining' },
   'Housing & Utilities': { color: '#3b82f6', bg: '#eff6ff', label: 'Housing & Utilities' },

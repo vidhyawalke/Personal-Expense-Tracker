@@ -47,7 +47,7 @@ function getBlockDates(startDateStr, cadence, duration, index) {
     };
   }
 
-  // Monthly (and 1+ Year broken into monthly milestones)
+  // Monthly milestones
   const start = new Date(base.getFullYear(), base.getMonth() + index, base.getDate());
   const end = new Date(base.getFullYear(), base.getMonth() + index + 1, base.getDate() - 1);
   const monthName = start.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
@@ -62,7 +62,7 @@ function getBlockDates(startDateStr, cadence, duration, index) {
 export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [], currency = '₹' }) {
   const savingsConfig = budgetData?.savings_target || {};
   
-  // Cadence: 'week' | 'month' | 'year'
+  // Frequency cadence: 'week' | 'month' | 'year'
   const [cadence, setCadence] = useState(savingsConfig.cadence || 'month');
   const [incomeInput, setIncomeInput] = useState(budgetData?.monthly_income ? String(budgetData.monthly_income) : '');
   const [budgetInput, setBudgetInput] = useState(budgetData?.monthly_budget ? String(budgetData.monthly_budget) : '');
@@ -71,7 +71,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
     savingsConfig.duration ? String(savingsConfig.duration) : (cadence === 'week' ? '12' : (cadence === 'year' ? '1' : '12'))
   );
   
-  // Start date for the plan (defaults to configured start_date or today's date)
+  // Goal schedule start date
   const todayStr = new Date().toISOString().split('T')[0];
   const [startDateInput, setStartDateInput] = useState(savingsConfig.start_date || todayStr);
 
@@ -79,23 +79,23 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
   const [validationError, setValidationError] = useState('');
   const [showInfo, setShowInfo] = useState(false);
 
-  // Active saved configuration
+  // Active saved settings
   const savedBoxes = Array.isArray(savingsConfig.saved_boxes) ? savingsConfig.saved_boxes : [];
   const activeGoal = Number(savingsConfig.goal) || 0;
   const activeCadence = savingsConfig.cadence || 'month';
   const activeDuration = Number(savingsConfig.duration) || (activeCadence === 'week' ? 12 : (activeCadence === 'year' ? 1 : 12));
   const activeStartDate = savingsConfig.start_date || todayStr;
 
-  // Live parsed numbers
+  // Parsed numerical values for live calculations
   const parsedIncome = parseFloat(incomeInput) || 0;
   const parsedBudget = parseFloat(budgetInput) || 0;
   const liveGoal = parseFloat(goalInput) || 0;
   const liveDuration = parseInt(durationInput, 10) || (cadence === 'week' ? 12 : (cadence === 'year' ? 1 : 12));
 
-  // Disposable Monthly Surplus
+  // Monthly surplus estimate
   const disposableMonthly = Math.max(0, parsedIncome - parsedBudget);
 
-  // Timeframe & Velocity Math Calculations
+  // Milestone breakdown calculations
   let periodTotalUnits = 0;
   let periodUnitLabel = 'Month';
   let targetPerPeriod = 0;
@@ -120,7 +120,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
     targetPerMonth = targetPerPeriod;
   }
 
-  // Active Matrix Calculation (Using active saved configuration)
+  // Active milestone schedule calculations
   let activeTotalUnits = 0;
   if (activeCadence === 'week') {
     activeTotalUnits = Math.max(1, activeDuration);
@@ -132,7 +132,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
 
   const activeTargetPerBlock = activeGoal > 0 && activeTotalUnits > 0 ? round2(activeGoal / activeTotalUnits) : 0;
   
-  // Calculate total saved from active matrix
+  // Total saved across completed milestones
   const totalSavedFromMatrix = round2(
     savedBoxes.reduce((acc, item) => {
       if (typeof item === 'object' && item !== null && item.amount) {
@@ -144,7 +144,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
 
   const matrixProgressPercent = activeGoal > 0 ? Math.min(100, round2((totalSavedFromMatrix / activeGoal) * 100)) : 0;
 
-  // Determine the LAST ADDED SAVING item
+  // Identify most recently saved milestone
   const savedEntriesWithInfo = savedBoxes.map((item, index) => {
     if (typeof item === 'object' && item !== null) {
       return {
@@ -175,11 +175,11 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
     ? formatDate(new Date(lastAddedEntry.savedAt))
     : (lastAddedEntry ? 'Recently' : null);
 
-  // Overall Plan Date Range
+  // Overall schedule date range
   const planStartObj = activeTotalUnits > 0 ? getBlockDates(activeStartDate, activeCadence, activeDuration, 0).start : new Date();
   const planEndObj = activeTotalUnits > 0 ? getBlockDates(activeStartDate, activeCadence, activeDuration, activeTotalUnits - 1).end : new Date();
 
-  // Find next pending block
+  // Next pending milestone block
   const savedIdsSet = new Set(savedEntriesWithInfo.map(e => e.id));
   let nextPendingBlockNum = null;
   for (let b = 1; b <= activeTotalUnits; b++) {
@@ -189,7 +189,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
     }
   }
 
-  // 50/30/20 Math Calculations
+  // 50/30/20 budget framework calculations
   const totalSpent = round2(expenses.reduce((acc, curr) => acc + (Number(curr.amount) || 0), 0));
   const needsTarget = round2(parsedIncome * 0.50);
   const wantsTarget = round2(parsedIncome * 0.30);
@@ -288,7 +288,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
       
-      {/* Settings & Math Formulation Card */}
+      {/* Goal configuration form */}
       <div className="finance-card">
         <div className="card-header">
           <div className="card-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -457,7 +457,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
 
           </div>
 
-          {/* Mathematical Formulation Preview */}
+          {/* Target breakdown preview */}
           {liveGoal > 0 && liveDuration > 0 && (
             <div className="calc-formula-box">
               <div className="calc-formula-row">
@@ -498,7 +498,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
         </form>
       </div>
 
-      {/* Goal Savings Milestones Card */}
+      {/* Savings milestone schedule */}
       <div className="finance-card">
         <div className="card-header">
           <div>
@@ -523,7 +523,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
           </div>
         </div>
 
-        {/* Milestone Progress Bar */}
+        {/* Milestone progress bar */}
         <div className="progress-bar-bg" style={{ height: '8px', marginBottom: '16px' }}>
           <div
             className="progress-bar-fill"
@@ -531,7 +531,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
           />
         </div>
 
-        {/* Milestone Executive Summary Tiles */}
+        {/* Milestone summary tiles */}
         {activeGoal > 0 && (
           <div className="milestone-summary-grid">
             <div className="milestone-summary-card">
@@ -578,7 +578,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
           </div>
         )}
 
-        {/* Milestone Grid with Week, Month, Start Date, End Date */}
+        {/* Milestone cards grid */}
         {activeGoal > 0 ? (
           <div className="milestone-cards-grid">
             {Array.from({ length: activeTotalUnits }).map((_, idx) => {
@@ -600,7 +600,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
                   onClick={() => handleToggleBox(blockNum)}
                   title={`${dates.label}: ${formatDate(dates.start)} to ${formatDate(dates.end)}`}
                 >
-                  {/* Top: Period Label & Status Pill */}
+                  {/* Period label and status */}
                   <div className="milestone-card-top">
                     <span className="milestone-period-title">{dates.label}</span>
                     {isLastAdded ? (
@@ -612,12 +612,12 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
                     )}
                   </div>
 
-                  {/* Subtitle / Month info if monthly */}
+                  {/* Month subtitle */}
                   {activeCadence !== 'week' && (
                     <div className="milestone-month-name">{dates.periodName}</div>
                   )}
 
-                  {/* Date Range: Start Date & End Date */}
+                  {/* Milestone date range */}
                   <div className="milestone-date-range">
                     <div className="milestone-date-row">
                       <span className="date-tag">Start:</span>
@@ -629,14 +629,14 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
                     </div>
                   </div>
 
-                  {/* Amount */}
+                  {/* Target amount */}
                   <div className="milestone-amount-row">
                     <span className="milestone-amount">
                       {currency}{activeTargetPerBlock.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </span>
                   </div>
 
-                  {/* Footer Action / Saved Timestamp */}
+                  {/* Card footer */}
                   <div className="milestone-card-footer">
                     {isSaved ? (
                       <span className="footer-status saved">
@@ -662,7 +662,7 @@ export default function BudgetPlanner({ budgetData, onUpdateBudget, expenses = [
         )}
       </div>
 
-      {/* 50 / 30 / 20 Budget Allocation */}
+      {/* 50/30/20 budget framework */}
       {parsedIncome > 0 && (
         <div className="finance-card">
           <div className="card-header">
